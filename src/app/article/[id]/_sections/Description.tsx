@@ -1,27 +1,28 @@
-import NextSectionCard from '@/components/cards/NextSectionCard';
-import { Article } from '@/lib/models';
+import NextSectionCard from '@/components/cards/next-section-card';
+import MainTitle from '@/components/typography/main-title';
+import { Article } from '@/lib/types';
 
-export default ({ article }: { article: Article }) => {
+export default function ({ article }: { article: Article }) {
   if (!article.content) {
     return '';
   }
 
   return (
-    <section className='section pt-32 mobile:pt-[5rem] pb-10 px-8 mobile:px-4 gap-8 tablet:gap-7 mobile:gap-3 mobile:flex-col !h-auto !min-h-[100svh]'>
-      <div className='flex flex-col grow'>
-        <h1 className='text-left mb-28 mobile:mb-8 main-title'>
+    <section className='section !h-auto !min-h-[100svh] gap-8 px-8 pb-10 pt-32 tablet:gap-7 mobile:flex-col mobile:gap-3 mobile:px-4 mobile:pt-[5rem]'>
+      <div className='flex grow flex-col'>
+        <MainTitle className='mb-28 text-left mobile:mb-8'>
           {article.title}
-        </h1>
+        </MainTitle>
         <div
-          className='pr-[10rem] mobile:pr-0 text-lg'
+          className='pr-[10rem] text-lg mobile:pr-0'
           dangerouslySetInnerHTML={{
             __html: (article.content as any).content
           }}
         />
       </div>
-      <div className='flex flex-col gap-10 tablet:gap-6 mobile:gap-3 max-w-[30%] min-w-[30%] mobile:max-w-none mobile:flex-row h-100%'>
+      <div className='h-100% flex min-w-[30%] max-w-[30%] flex-col gap-10 tablet:gap-6 mobile:max-w-none mobile:flex-row mobile:gap-3'>
         <img
-          className='rounded-[3rem] tablet:rounded-[2rem] max-h-[70%] object-cover'
+          className='max-h-[70%] rounded-[3rem] object-cover tablet:rounded-[2rem]'
           src={article.image}
           alt='Directory description'
         />
@@ -43,4 +44,4 @@ export default ({ article }: { article: Article }) => {
       </div>
     </section>
   );
-};
+}

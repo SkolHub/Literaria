@@ -1,7 +1,5 @@
 'use server';
 
-import { initAdmin } from '../../../../firebase-admin.config';
-import { getAuth } from 'firebase-admin/auth';
 import { cookies } from 'next/headers';
 
 export async function login(token: string) {

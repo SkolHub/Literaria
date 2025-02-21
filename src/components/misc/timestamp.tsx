@@ -1,19 +1,23 @@
-import dateFormatter from '@/lib/formatters/dateFormatter';
+import { dateFormatter } from '@/lib/formatters/date-formatter';
+import { cn } from '@/lib/utils';
 
 export default ({
-	time,
-	className = ''
+  time,
+  className = ''
 }: {
-	time: Date;
-	className?: string;
+  time: Date;
+  className?: string;
 }) => {
-	return (
-		<div
-			className={`bg-white rounded-full flex items-center justify-center py-1 px-4 ${className}`}
-		>
-			<label className='font-semibold text-base'>
-				{dateFormatter(new Date(time))}
-			</label>
-		</div>
-	);
+  return (
+    <div
+      className={cn(
+        'flex items-center justify-center rounded-full bg-white px-4 py-1',
+        className
+      )}
+    >
+      <label className='text-base font-semibold'>
+        {dateFormatter(new Date(time))}
+      </label>
+    </div>
+  );
 };

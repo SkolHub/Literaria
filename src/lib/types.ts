@@ -36,7 +36,7 @@ export interface Image {
   metadata: FullMetadata;
 }
 
-interface CarouselCategoryModel {
+export interface CarouselCategoryModel {
   image: any;
   logo: any;
   title: string;

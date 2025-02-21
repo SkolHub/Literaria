@@ -1,6 +1,6 @@
-import { Article } from '@/lib/models';
+import { Article } from '@/lib/types';
 
-export default ({ article }: { article: Article }) => {
+export default function ({ article }: { article: Article }) {
   return (
     <section className='px-[9rem] pt-32 mobile:px-4'>
       <div className='pb-4'>
@@ -22,4 +22,4 @@ export default ({ article }: { article: Article }) => {
       ></article>
     </section>
   );
-};
+}

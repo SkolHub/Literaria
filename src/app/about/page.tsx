@@ -1,21 +1,17 @@
 import React from 'react';
-import '@/ui/fontawesome/css/fa.css';
-import { getArticleCount } from '@/lib/api/article';
-import { getGalleryPhotosCount } from '@/lib/api/photos';
+import MainTitle from '@/components/typography/main-title';
+import SmallTitle from '@/components/typography/small-title';
 
-export default async () => {
-  const [articlesCount, photosCount] = await Promise.all([
-    getArticleCount(),
-    getGalleryPhotosCount()
-  ]);
+export default async function () {
+  const [articlesCount, photosCount] = await Promise.all([2, 2]);
 
   return (
     <div className='flex min-h-[calc(100dvh-4rem)] flex-col px-8 pt-[5rem]'>
-      <h2 className='main-title py-4'>Despre noi</h2>
+      <MainTitle className='py-4'>Despre noi</MainTitle>
       <section>
         <div className='flex mobile:flex-col'>
           <div className='w-3/4 laptop:w-2/3 tablet:w-1/2 mobile:w-full'>
-            <h2 className='small-title py-4'>Mândră de elevii mei!</h2>
+            <SmallTitle className='py-4'>Mândră de elevii mei!</SmallTitle>
             <p className='py-2'>
               Literatura este un domeniu ce necesită interpretare și
               reinterpretare cu fiecare generație.
@@ -59,7 +55,7 @@ export default async () => {
             }
           >
             <img
-              src='/images/raluca_iancau.jpg'
+              src='/raluca_iancau.jpg'
               alt='Raluca Iancau'
               className='w-full rounded-3xl'
             />
@@ -67,7 +63,7 @@ export default async () => {
         </div>
       </section>
       <section className='pt-20'>
-        <h2 className='small-title py-4'>Echipa noastră</h2>
+        <SmallTitle className='py-4'>Echipa noastră</SmallTitle>
         <div
           className={
             'flex items-center justify-around pt-8 mobile:flex-col mobile:gap-12'
@@ -94,23 +90,15 @@ export default async () => {
         </div>
       </section>
       <section className='pt-20'>
-        <h2 className='small-title py-4'>Statistici</h2>
-        <div
-          className={
-            'flex items-center justify-around pt-8 mobile:flex-col mobile:gap-12'
-          }
-        >
+        <SmallTitle className='py-4'>Statistici</SmallTitle>
+        <div className='flex items-center justify-around pt-8 mobile:flex-col mobile:gap-12'>
           <div className='flex flex-col items-center justify-center'>
-            <p className='py-1 text-4xl font-semibold'>
-              {articlesCount.articles}
-            </p>
+            <p className='py-1 text-4xl font-semibold'>{2}</p>
             <p>articole</p>
           </div>
           <div className='h-[80px] w-0.5 bg-black mobile:hidden'></div>
           <div className='flex flex-col items-center justify-center'>
-            <p className='py-1 text-4xl font-semibold'>
-              {articlesCount.authors}
-            </p>
+            <p className='py-1 text-4xl font-semibold'>{2}</p>
             <p>autori articole</p>
           </div>
           <div className='h-[80px] w-0.5 bg-black mobile:hidden'></div>
@@ -120,15 +108,13 @@ export default async () => {
           </div>
           <div className='h-[80px] w-0.5 bg-black mobile:hidden'></div>
           <div className='flex flex-col items-center justify-center'>
-            <p className='py-1 text-4xl font-semibold'>
-              {articlesCount.reviews as number}
-            </p>
+            <p className='py-1 text-4xl font-semibold'>{2}</p>
             <p>recenzii de film</p>
           </div>
         </div>
       </section>
       <section className='pt-20'>
-        <h2 className='small-title py-4'>Realizarea site-ului original</h2>
+        <SmallTitle className='py-4'>Realizarea site-ului original</SmallTitle>
         <p className='w-1/3 mobile:w-full'>
           Manea Vlad, Gavrilă Vlăduț, Bighiu Matei, Mihăilă Eduard, Bene Ionuț,
           Nica Octavian, Macri Tudor, Russu Mihaela, Spiridon Roxana, Stoian
@@ -136,13 +122,13 @@ export default async () => {
         </p>
       </section>
       <section className='pt-20'>
-        <h2 className='small-title py-4'>ISSN</h2>
+        <SmallTitle className='py-4'>ISSN</SmallTitle>
         <p>Literaria (Brașov)</p>
         <p>ISSN 3044 - 800X</p>
         <p>ISSN-L 3044 - 800X</p>
       </section>
       <section className='py-20'>
-        <h2 className='small-title py-4'>Contact</h2>
+        <SmallTitle className='py-4'>Contact</SmallTitle>
         <div className='flex items-center gap-2 pb-1.5'>
           <i className='fa fa-solid fa-location-dot'></i>
           <p>Calea București 75, Brașov 500326</p>
@@ -154,4 +140,4 @@ export default async () => {
       </section>
     </div>
   );
-};
+}

@@ -1,7 +1,7 @@
-import { Dispatch, SetStateAction } from 'react';
-import { motion } from 'framer-motion';
-import { categories } from '@/lib/data/categories';
 import NextItemButton from '@/components/buttons/next-item-button';
+import { categories } from '@/lib/data/categories';
+import { motion } from 'framer-motion';
+import { Dispatch, SetStateAction } from 'react';
 
 const activeProgressIndicator = {
   width: '.5rem',
@@ -25,8 +25,8 @@ export default function ({
   };
 
   return (
-    <div className='flex gap-4 absolute -translate-x-2/4 left-2/4 bottom-4'>
-      <div className='backdrop-blur-[0.1rem] flex gap-[0.65rem] p-4 rounded-[5rem] bg-[#ffffffcc]'>
+    <div className='absolute bottom-4 left-2/4 flex -translate-x-2/4 gap-4'>
+      <div className='flex gap-[0.65rem] rounded-[5rem] bg-[#ffffffcc] p-4 backdrop-blur-[0.1rem]'>
         {categories.map((_category, index) => (
           <motion.div
             animate={

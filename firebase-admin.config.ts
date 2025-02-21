@@ -1,5 +1,6 @@
 import admin from 'firebase-admin';
 import envConfig from './env.config';
+import { atob } from 'node:buffer';
 
 interface FirebaseAdminAppParams {
   projectId: string;
@@ -33,11 +34,13 @@ export function createFirebaseAdminApp(params: FirebaseAdminAppParams) {
 }
 
 export async function initAdmin() {
+  const service_account = JSON.parse(atob(envConfig.FIREBASE_SERVICE_ACCOUNT));
+
   const params: FirebaseAdminAppParams = {
-    projectId: envConfig.PROJECT_ID,
-    clientEmail: envConfig.CLIENT_EMAIL,
-    storageBucket: envConfig.STORAGE_BUCKET,
-    privateKey: envConfig.PRIVATE_KEY.replace(/\\n/g, '\n')
+    projectId: service_account.project_id,
+    clientEmail: service_account.client_email,
+    storageBucket: service_account.storage_bucket,
+    privateKey: service_account.private_key
   };
 
   return createFirebaseAdminApp(params);

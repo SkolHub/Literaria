@@ -1,15 +1,16 @@
-import MediumArticleCard from '@/components/cards/MediumArticleCard';
-import ArticleList from '@/components/ArticleList';
-import { getLatest } from '@/lib/api/article';
+import { getLatestArticles } from '@/api/article';
+import MediumArticleCard from '@/components/cards/medium-article-card';
+import ArticleList from '@/components/misc/article-list';
+import MainTitle from '@/components/typography/main-title';
 
-export default async () => {
-  const articles = await getLatest();
+export default async function () {
+  const articles = await getLatestArticles();
 
   return (
     <section className='section flex-col pt-20 mobile:h-[100dvh]'>
-      <h1 className='main-title mb-8 pl-8 text-left laptop:pl-5'>
+      <MainTitle className='mb-8 pl-8 text-left laptop:pl-5'>
         Ultimele articole
-      </h1>
+      </MainTitle>
       <ArticleList className='mobile:h-full'>
         {articles.map((article, index) => (
           <MediumArticleCard article={article as any} key={index} />
@@ -17,4 +18,4 @@ export default async () => {
       </ArticleList>
     </section>
   );
-};
+}

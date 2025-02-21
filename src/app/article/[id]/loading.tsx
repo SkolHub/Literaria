@@ -9,11 +9,11 @@ export default function Loading() {
       </div>
       <div className='flex min-w-[30%] max-w-[30%] flex-col gap-10 tablet:gap-6 mobile:max-w-none mobile:flex-row mobile:gap-3'>
         <div className='flex h-[150px] grow gap-3'>
-          <Skeleton className={`hidden w-1/2 rounded-[2rem] p-5 mobile:flex`} />
-          <Skeleton className={`hidden w-1/2 rounded-[2rem] p-5 mobile:flex`} />
+          <Skeleton className='hidden w-1/2 rounded-[2rem] p-5 mobile:flex' />
+          <Skeleton className='hidden w-1/2 rounded-[2rem] p-5 mobile:flex' />
         </div>
-        <Skeleton className='flex min-h-[50%] tablet:grow mobile:hidden rounded-3xl' />
-        <Skeleton className='flex min-h-[40%] tablet:grow mobile:hidden rounded-3xl' />
+        <Skeleton className='flex min-h-[50%] rounded-3xl tablet:grow mobile:hidden' />
+        <Skeleton className='flex min-h-[40%] rounded-3xl tablet:grow mobile:hidden' />
       </div>
     </section>
   );

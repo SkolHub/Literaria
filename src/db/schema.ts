@@ -1,3 +1,3 @@
-export * from '@db/articles';
-export * from '@db/article-contents';
-export * from '@db/highlight-articles';
+export * from './schema/article-contents';
+export * from './schema/articles';
+export * from './schema/highlight-articles';

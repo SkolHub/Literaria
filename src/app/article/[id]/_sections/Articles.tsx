@@ -1,10 +1,11 @@
-import { Article } from '@/lib/models';
-import ArticleList from '@/components/ArticleList';
-import MediumArticleCard from '@/components/cards/MediumArticleCard';
-import dateFormatter from '@/lib/formatters/dateFormatter';
+import MediumArticleCard from '@/components/cards/medium-article-card';
+import ArticleList from '@/components/misc/article-list';
+import MainTitle from '@/components/typography/main-title';
+import { dateFormatter } from '@/lib/formatters/date-formatter';
+import { Article } from '@/lib/types';
 import Link from 'next/link';
 
-export default ({ article }: { article: Article }) => {
+export default function ({ article }: { article: Article }) {
   const articles = article.children?.filter(
     (art) => art.children?.length === 0
   );
@@ -18,7 +19,9 @@ export default ({ article }: { article: Article }) => {
       id='articles'
       className='section !h-auto !min-h-[100svh] flex-col pb-4 pt-20'
     >
-      <h1 className='main-title mb-8 pl-8 text-left laptop:pl-5'>Articole</h1>
+      <MainTitle className='mb-8 pl-8 text-left laptop:pl-5'>
+        Articole
+      </MainTitle>
       <ArticleList className='mobile:hidden'>
         {articles.map((article, index) => (
           <MediumArticleCard article={article} key={index} />
@@ -54,4 +57,4 @@ export default ({ article }: { article: Article }) => {
       </div>
     </section>
   );
-};
+}

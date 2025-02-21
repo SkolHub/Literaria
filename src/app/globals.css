@@ -2,20 +2,85 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+body,
+html {
+    @apply m-0 p-0 overflow-hidden;
+    scroll-behavior: smooth;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.swiper {
+    padding-left: 2rem !important;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@media screen and (max-width: 1600px) {
+    .swiper {
+        padding-left: 1.25rem !important;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .swiper {
+        padding-left: 5vw !important;
+    }
+}
+
+@media screen and (min-width: 900px) {
+    .swiper-wrapper {
+        > * {
+            max-width: min-content;
+        }
+    }
+
+    ::-webkit-scrollbar {
+        width: .7rem;
+        padding-right: .1rem;
+        margin: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+        padding-right: .1rem;
+        margin-top: 11.25rem;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        width: .4rem;
+        background: rgba(61, 71, 86, 0.33);
+        border-radius: 1rem;
+        border: .2rem solid white;
+    }
+}
+
+.section {
+    @apply h-[100svh] w-screen box-border flex snap-start;
+}
+
+main {
+    scroll-snap-type: y mandatory;
+}
+
+nextjs-portal {
+    display: none;
+}
+
+.small-title {
+    @apply text-3xl font-semibold laptop:text-2xl;
+}
+
+.title-label {
+    @apply text-base font-medium laptop:text-xs;
+}
+
+.nav-title {
+    @apply leading-[1.3rem] text-[.9rem] font-medium big-laptop:text-[.82rem] big-laptop:leading-[1.15rem] laptop:text-xs tablet:text-[.6rem] tablet:leading-[.8rem] small-tablet:text-[.4rem] small-tablet:leading-[.6rem];
+}
+
+.nav-item {
+    @apply text-[1.6rem] leading-[2rem] font-semibold big-laptop:text-[1.3rem] big-laptop:leading-[1.6rem] laptop:text-[1.1rem] laptop:leading-[1.35rem] tablet:text-[1rem] tablet:leading-[1.2rem] small-tablet:text-[.8rem] small-tablet:leading-[1rem];
+}
+
+@layer base {
+    :root {
+        --radius: 0.5rem;
+    }
 }

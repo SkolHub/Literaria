@@ -1,37 +1,38 @@
-import GiantArticleCard from '@/components/cards/GiantArticleCard';
-import SpotlightCard from '@/components/cards/SpotlightCard';
-import NextSectionCard from '@/components/cards/NextSectionCard';
-import articleCountFormatter from '@/lib/formatters/articleCountFormatter';
-import SpotlightCardMobile from '@/components/cards/SpotlightCardMobile';
-import NextSectionCardMobile from '@/components/cards/NextSectionCardMobile';
-import { Article } from '@/lib/models';
+import GiantArticleCard from '@/components/cards/giant-article-card';
+import NextSectionCard from '@/components/cards/next-section-card';
+import NextSectionCardMobile from '@/components/cards/next-section-card-mobile';
+import SpotlightCard from '@/components/cards/spotlight-card';
+import SpotlightCardMobile from '@/components/cards/spotlight-card-mobile';
+import MainTitle from '@/components/typography/main-title';
+import { articleCountFormatter } from '@/lib/formatters/article-count-formatter';
+import { Article } from '@/lib/types';
 import Link from 'next/link';
 
-export default ({ article }: { article: Article }) => {
+export default function ({ article }: { article: Article }) {
   return (
-    <section className='section pt-32 mobile:pt-[5rem] pb-10 px-8 mobile:px-4 gap-12 tablet:gap-7 mobile:gap-3 mobile:flex-col'>
-      <div className='flex flex-col grow'>
-        <h1 className='text-left mb-8 main-title'>{article.title}</h1>
+    <section className='section gap-12 px-8 pb-10 pt-32 tablet:gap-7 mobile:flex-col mobile:gap-3 mobile:px-4 mobile:pt-[5rem]'>
+      <div className='flex grow flex-col'>
+        <MainTitle className='mb-8 text-left'>{article.title}</MainTitle>
         <GiantArticleCard article={article} />
       </div>
-      <div className='flex flex-col gap-10 tablet:gap-6 mobile:gap-3 max-w-[30%] min-w-[30%] mobile:max-w-none mobile:flex-row'>
-        <div className='max-h-[150px] flex gap-3'>
+      <div className='flex min-w-[30%] max-w-[30%] flex-col gap-10 tablet:gap-6 mobile:max-w-none mobile:flex-row mobile:gap-3'>
+        <div className='flex max-h-[150px] gap-3'>
           <SpotlightCardMobile
-            className='hidden mobile:flex w-1/2'
+            className='hidden w-1/2 mobile:flex'
             article={article.children[0]}
           />
           <NextSectionCardMobile
-            className='hidden mobile:flex w-1/2'
+            className='hidden w-1/2 mobile:flex'
             text={articleCountFormatter(article.children.length)}
             image={article.children[0].image}
             anchorScroll={'#articles'}
           />
         </div>
-        <Link className='tablet:grow mobile:hidden min-h-[40%] flex' href={'/article/' + article.children[0].id}>
-          <SpotlightCard
-            className='grow'
-            article={article.children[0]}
-          />
+        <Link
+          className='flex min-h-[40%] tablet:grow mobile:hidden'
+          href={'/article/' + article.children[0].id}
+        >
+          <SpotlightCard className='grow' article={article.children[0]} />
         </Link>
         <NextSectionCard
           className='tablet:hidden'
@@ -42,4 +43,4 @@ export default ({ article }: { article: Article }) => {
       </div>
     </section>
   );
-};
+}

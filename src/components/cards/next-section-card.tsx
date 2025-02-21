@@ -1,8 +1,8 @@
 'use client';
 
-import NextItemButton from '@/components/buttons/NextItemButton';
+import OpenLinkButton from '@/components/buttons/open-link-button';
+import SmallTitle from '@/components/typography/small-title';
 import Link from 'next/link';
-import OpenLinkButton from '@/components/buttons/OpenLinkButton';
 
 const NextSectionCard = ({
   text,
@@ -18,18 +18,18 @@ const NextSectionCard = ({
   const handleClick = () => {};
 
   return (
-    <div className={`relative w-full h-0 grow ${className}`}>
+    <div className={`relative h-0 w-full grow ${className}`}>
       <img
         src={image}
-        className='object-cover w-full h-full rounded-[3rem] tablet:rounded-[2rem]'
+        className='h-full w-full rounded-[3rem] object-cover tablet:rounded-[2rem]'
         alt='Next section'
       />
-      <div className='absolute w-full h-full flex gap-8 items-center justify-center flex-col backdrop-blur-[20px] backdrop-brightness-50 rounded-[3rem] tablet:rounded-[2rem] left-0 top-0 p-4'>
-        <label className='small-title text-white left-0 top-0 text-center'>
+      <div className='absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center gap-8 rounded-[3rem] p-4 backdrop-blur-[20px] backdrop-brightness-50 tablet:rounded-[2rem]'>
+        <SmallTitle className='left-0 top-0 text-center text-white'>
           {text}
-        </label>
+        </SmallTitle>
         <Link href={anchorScroll}>
-          <OpenLinkButton className='rotate-[135deg] flex scale-90' />
+          <OpenLinkButton className='flex rotate-[135deg] scale-90' />
         </Link>
       </div>
     </div>

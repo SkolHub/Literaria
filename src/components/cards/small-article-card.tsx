@@ -1,32 +1,32 @@
-import OpenLinkButton from '@/components/buttons/OpenLinkButton';
-import { Article } from '@/lib/models';
+import OpenLinkButton from '@/components/buttons/open-link-button';
+import SmallTitle from '@/components/typography/small-title';
+import TitleLabel from '@/components/typography/title-label';
+import { ArticlePreview } from '@/lib/types';
 import Link from 'next/link';
 
-const SmallArticleCard = ({
-	article,
-	className = ''
+export default function ({
+  article,
+  className = ''
 }: {
-	article: Article;
-	className?: string;
-}) => {
-	const { author, title, image, id } = article;
+  article: ArticlePreview;
+  className?: string;
+}) {
+  const { author, title, image, id } = article;
 
-	return (
-		<Link href={`/article/${id}`} className={`flex flex-col ${className}`}>
-			<div className='relative flex h-0 grow'>
-				<img
-					className='object-cover rounded-[3rem] cursor-pointer w-full h-auto'
-					src={image}
-					alt={title}
-				/>
-				<OpenLinkButton className='absolute right-8 top-8' />
-			</div>
-			<div className='flex flex-col'>
-				<label className='title-label'>{author}</label>
-				<h3 className='small-title mt-4 mb-0 mx-0'>{title}</h3>
-			</div>
-		</Link>
-	);
-};
-
-export default SmallArticleCard;
+  return (
+    <Link href={`/article/${id}`} className={`flex flex-col ${className}`}>
+      <div className='relative flex h-0 grow'>
+        <img
+          className='h-auto w-full cursor-pointer rounded-[3rem] object-cover'
+          src={image}
+          alt={title}
+        />
+        <OpenLinkButton className='absolute right-8 top-8' />
+      </div>
+      <div className='flex flex-col'>
+        <TitleLabel>{author}</TitleLabel>
+        <SmallTitle className='mx-0 mb-0 mt-4'>{title}</SmallTitle>
+      </div>
+    </Link>
+  );
+}
