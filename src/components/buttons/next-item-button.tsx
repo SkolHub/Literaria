@@ -15,7 +15,7 @@ export default function ({
         className
       )}
     >
-      <i className='fa fa-arrow-up-right text-2xl' />
+      <i className='fa fa-arrow-right text-2xl' />
     </div>
   );
 }

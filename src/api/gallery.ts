@@ -8,7 +8,7 @@ import {
   ref,
   uploadBytes
 } from '@firebase/storage';
-import { initFirebaseApp } from '../../../firebase.config';
+import { initFirebaseApp } from '../../firebase.config';
 
 export async function createImage({
   file,

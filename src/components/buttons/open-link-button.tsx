@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 export default ({
   url = '',
@@ -8,15 +9,14 @@ export default ({
   className?: string;
 }) => {
   return (
-    <div>
-      <div
-        className={cn(
-          'flex aspect-square items-center justify-center rounded-full bg-white p-4',
-          className
-        )}
-      >
-        <i className='fa fa-arrow-up-right text-2xl' />
-      </div>
-    </div>
+    <Link
+      className={cn(
+        'flex aspect-square h-12 w-12 items-center justify-center rounded-full bg-white p-4',
+        className
+      )}
+      href={url}
+    >
+      <i className='fa fa-arrow-up-right text-2xl' />
+    </Link>
   );
 };
