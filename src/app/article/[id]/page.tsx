@@ -1,9 +1,9 @@
 import { getArticleByID } from '@/api/article';
-import Article from '@/app/article/[id]/_sections/Article';
-import Articles from '@/app/article/[id]/_sections/Articles';
-import Description from '@/app/article/[id]/_sections/Description';
-import Directories from '@/app/article/[id]/_sections/Directories';
-import Landing from '@/app/article/[id]/_sections/Landing';
+import Article from '@/app/article/[id]/_sections/article';
+import Articles from '@/app/article/[id]/_sections/articles';
+import Description from '@/app/article/[id]/_sections/description';
+import Directories from '@/app/article/[id]/_sections/directories';
+import Landing from '@/app/article/[id]/_sections/landing';
 import { Article as ArticleModel } from '@/lib/types';
 
 export default async function ({

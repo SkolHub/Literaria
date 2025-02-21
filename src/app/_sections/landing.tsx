@@ -1,9 +1,9 @@
 'use client';
 
-import SliderImages from '@/app/_sections/Landing/slider-images';
-import SliderIndicator from '@/app/_sections/Landing/slider-indicator';
-import SliderLabel from '@/app/_sections/Landing/slider-label';
-import useCarousel from '@/app/_sections/Landing/use-carousel';
+import SliderImages from '@/app/_sections/landing/slider-images';
+import SliderIndicator from '@/app/_sections/landing/slider-indicator';
+import SliderLabel from '@/app/_sections/landing/slider-label';
+import useCarousel from '@/app/_sections/landing/use-carousel';
 import NextItemButton from '@/components/buttons/next-item-button';
 import { categories } from '@/lib/data/categories';
 
