@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1709299964709,
+      "tag": "0000_soft_zeigeist",
+      "breakpoints": true
+    }
+  ]
+}
