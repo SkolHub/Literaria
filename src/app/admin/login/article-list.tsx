@@ -54,8 +54,6 @@ export default function ChildArticlesSection() {
             <LinkIcon className='mr-2 h-4 w-4' />
             Add Existing
           </Button>
-
-          {/* Create New Article Button (File Upload) */}
           <Button
             onClick={() => document.getElementById('file-upload')!.click()}
             size='sm'

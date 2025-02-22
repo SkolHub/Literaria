@@ -5,7 +5,9 @@ import { integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 
 export const articles = pgTable('articles', {
   id: integer('id').primaryKey().generatedAlwaysAsIdentity(),
-  createdAt: timestamp('created_at', { mode: 'string' }).defaultNow().notNull(),
+  createdAt: timestamp('created_at', { mode: 'string', precision: 3 })
+    .notNull()
+    .defaultNow(),
   title: text('title').notNull(),
   author: text('author').notNull(),
   image: text('image').notNull(),
@@ -16,7 +18,7 @@ export const articles = pgTable('articles', {
 export const articleRelations = relations(articles, ({ one, many }) => ({
   content: one(articleContents, {
     fields: [articles.id],
-    references: [articleContents.id]
+    references: [articleContents.articleID]
   }),
   children: many(articles, {
     relationName: 'children'

@@ -44,7 +44,6 @@ main {
     ::-webkit-scrollbar-track {
         background: transparent;
         padding-right: .1rem;
-        margin-top: 11.25rem;
     }
 
     ::-webkit-scrollbar-thumb {

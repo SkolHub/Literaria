@@ -1,77 +1,92 @@
+'use client';
+
 import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronRight, FileText } from 'lucide-react';
+import { ChevronDown, ChevronRight, Edit, FileText } from 'lucide-react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-export default function ArticleTreeSidebar({ articles }: any) {
-  // Track expanded state of each node
-  const [expanded, setExpanded] = useState(new Set());
+interface SidebarArticle {
+  id: number;
+  title: string;
+  children?: SidebarArticle[];
+}
 
-  const toggleNode = (id: any) => {
-    const newExpanded = new Set(expanded);
-    if (newExpanded.has(id)) {
-      newExpanded.delete(id);
+export function TreeNode({
+  node,
+  level = 0
+}: {
+  node: SidebarArticle;
+  level?: number;
+}) {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const router = useRouter();
+  const hasChildren = node.children && node.children.length > 0;
+  const [hover, setHover] = useState<boolean>(false);
+
+  function handleClick() {
+    if (hasChildren) {
+      setIsExpanded(!isExpanded);
     } else {
-      newExpanded.add(id);
+      router.push(`/admin/article/${node.id}`);
     }
-    setExpanded(newExpanded);
-  };
+  }
 
-  const TreeNode = ({ node, level = 0 }: any) => {
-    const hasChildren = node.children && node.children.length > 0;
-    const isExpanded = expanded.has(node.id);
-
-    return (
-      <div className='select-none'>
-        <div
-          className={cn(
-            'flex cursor-pointer items-center rounded px-2 py-1 hover:bg-gray-100',
-            'transition-colors duration-150 ease-in-out'
-          )}
-          style={{ paddingLeft: `${level * 16 + 8}px` }}
-          onClick={() => {
-            if (hasChildren) {
-              toggleNode(node.id);
-            } else {
-              // Navigate to article
-              window.location.href = `/articles/${node.id}`;
-            }
-          }}
-        >
+  return (
+    <div className='select-none'>
+      <div
+        className={cn(
+          'flex cursor-pointer items-center rounded px-2 py-1 hover:bg-gray-100',
+          'transition-colors duration-150 ease-in-out'
+        )}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        style={{ paddingLeft: `${level * 4 + 8}px` }}
+        onClick={handleClick}
+      >
+        <div className='flex w-full items-center justify-between gap-2'>
           <div className='flex items-center gap-2'>
             {hasChildren ? (
               <div className='flex h-4 w-4 items-center justify-center'>
                 {isExpanded ? (
-                  <ChevronDown className='h-4 w-4 text-gray-500' />
+                  <ChevronDown className='max-h-4 min-h-4 min-w-4 max-w-4 text-gray-500' />
                 ) : (
-                  <ChevronRight className='h-4 w-4 text-gray-500' />
+                  <ChevronRight className='max-h-4 min-h-4 min-w-4 max-w-4 text-gray-500' />
                 )}
               </div>
             ) : (
-              <FileText className='h-4 w-4 text-gray-500' />
+              <FileText className='max-h-4 min-h-4 min-w-4 max-w-4 text-gray-500' />
             )}
-            <span className='text-sm'>{node.title}</span>
+            <span className='line-clamp-2 text-sm'>{node.title}</span>
           </div>
+          {hover && hasChildren && (
+            <Link href={`/admin/article/${node.id}`}>
+              <Edit className='max-h-4 min-h-4 min-w-4 max-w-4 text-gray-500' />
+            </Link>
+          )}
         </div>
-
-        {hasChildren && isExpanded && (
-          <div className='ml-2'>
-            {node.children.map((child: any) => (
-              <TreeNode key={child.id} node={child} level={level + 1} />
-            ))}
-          </div>
-        )}
       </div>
-    );
-  };
+      {node.children && node.children.length > 0 && isExpanded && (
+        <div className='ml-2'>
+          {node.children.map((child: SidebarArticle) => (
+            <TreeNode key={child.id} node={child} level={level + 1} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
+export default function ArticleTreeSidebar({
+  articles
+}: {
+  articles: SidebarArticle[];
+}) {
   return (
-    <div className='h-full w-64 overflow-y-auto border-r bg-white'>
-      <div className='p-4'>
-        <h2 className='mb-4 text-lg font-semibold'>Articles</h2>
-        {articles.map((article: any) => (
-          <TreeNode key={article.id} node={article} />
-        ))}
-      </div>
+    <div className='flex h-full w-64 flex-col overflow-y-auto bg-white py-4 pr-4'>
+      {articles.map((article) => (
+        <TreeNode key={article.id} node={article} />
+      ))}
     </div>
   );
 }
