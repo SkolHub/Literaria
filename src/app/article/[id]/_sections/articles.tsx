@@ -4,6 +4,7 @@ import MainTitle from '@/components/typography/main-title';
 import { dateFormatter } from '@/lib/formatters/date-formatter';
 import { Article } from '@/lib/types';
 import Link from 'next/link';
+import PhotoWithBlur from '@/components/misc/photo-with-blur';
 
 export default function ({ article }: { article: Article }) {
   const articles = article.children?.filter(
@@ -11,13 +12,13 @@ export default function ({ article }: { article: Article }) {
   );
 
   if (!articles?.length) {
-    return '';
+    return null;
   }
 
   return (
     <section
       id='articles'
-      className='section !h-auto !min-h-[100svh] flex-col pb-4 pt-20'
+      className='section relative flex-col pb-4 pt-20 mobile:!h-auto mobile:!min-h-dvh'
     >
       <MainTitle className='mb-8 pl-8 text-left laptop:pl-5'>
         Articole
@@ -47,8 +48,8 @@ export default function ({ article }: { article: Article }) {
                 </label>
               </div>
             </div>
-            <img
-              className='h-[8rem] w-[44%] min-w-[44%] max-w-[44%] rounded-[1.25rem] object-cover'
+            <PhotoWithBlur
+              className='h-[8rem] w-[44%] min-w-[44%] max-w-[44%] rounded-[1.25rem]'
               src={article.image}
               alt={article.title}
             />

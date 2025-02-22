@@ -1,5 +1,6 @@
 import { Image as ImageType } from '@/lib/types';
 import Image from 'next/image';
+import PhotoWithBlur from '@/components/misc/photo-with-blur';
 
 export default function ({
   image,
@@ -12,17 +13,15 @@ export default function ({
 }) {
   return (
     <div className='relative aspect-square w-[300px]'>
-      <Image
+      <PhotoWithBlur
         src={image.src}
         alt='poza'
         key={index}
-        width={300}
-        height={300}
         onClick={() => {
           onClick(index);
         }}
         className={
-          'h-[300px] w-[300px] cursor-pointer rounded-3xl object-cover'
+          'h-[300px] w-[300px] cursor-pointer rounded-3xl'
         }
       />
       {!!image.metadata.customMetadata?.description && (

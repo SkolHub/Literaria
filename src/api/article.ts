@@ -1,19 +1,21 @@
 'use server';
 
 import { db } from '@/db/db';
-import { articles, highlightArticles } from '@db/articles';
-import { count, countDistinct, desc, eq, isNull, sql } from 'drizzle-orm';
+import { article, recommendedArticle } from '@db/articles';
+import { and, desc, eq, isNull, ne, sql } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
 export async function getArticleByID(id: number) {
-  return db.query.articles.findFirst({
-    where: eq(articles.id, id),
+  // First get the main article to get the author
+  const articleData = await db.query.article.findFirst({
+    where: eq(article.id, id),
     columns: {
       image: true,
       title: true,
       author: true,
       createdAt: true,
-      id: true
+      id: true,
+      parentId: true
     },
     with: {
       children: {
@@ -28,32 +30,93 @@ export async function getArticleByID(id: number) {
           children: true
         }
       },
-      parent: true,
+      parent: {
+        columns: {
+          id: true,
+          title: true
+        },
+        with: {
+          children: {
+            where: ne(article.id, id),
+            columns: {
+              image: true,
+              title: true,
+              author: true,
+              createdAt: true,
+              id: true
+            }
+          }
+        }
+      },
       content: true
     }
   });
+
+  if (!articleData) {
+    return null;
+  }
+
+  // Then get the remaining data using the author we retrieved
+  const [parentsQuery, authorArticles] = await Promise.all([
+    // Get all parent IDs using a recursive CTE
+    db.execute(sql`
+      WITH RECURSIVE article_hierarchy AS (
+        SELECT id, "parentID", title
+        FROM "Article"
+        WHERE id = ${id}
+        
+        UNION ALL
+        
+        SELECT a.id, a."parentID", a.title
+        FROM "Article" a
+        INNER JOIN article_hierarchy ah ON a.id = ah."parentID"
+      )
+      SELECT id, title
+      FROM article_hierarchy
+      WHERE id != ${id}
+      ORDER BY id DESC;
+    `),
+
+    // Get other articles by the same author
+    db.query.article.findMany({
+      where: and(
+        eq(article.author, articleData.author),
+        ne(article.id, id)
+      ),
+      columns: {
+        id: true,
+        title: true,
+        author: true,
+        createdAt: true,
+        image: true
+      },
+      orderBy: [desc(article.createdAt)],
+      limit: 10
+    })
+  ]);
+
+  return {
+    ...articleData,
+    parentChain: parentsQuery.rows,
+    siblings: articleData.parent?.children || [],
+    authorOtherArticles: authorArticles
+  };
 }
 
 export async function getLatestArticles() {
-  return db.select().from(articles).limit(10).orderBy(desc(articles.createdAt));
+  return db.select().from(article).limit(10).orderBy(desc(article.createdAt));
 }
 
 export async function getHighlightedArticles() {
   return db
-    .select({
-      image: articles.image,
-      title: articles.title,
-      author: articles.author,
-      createdAt: articles.createdAt,
-      id: articles.id
-    })
-    .from(highlightArticles)
-    .innerJoin(articles, eq(highlightArticles.articleID, articles.id));
+    .select()
+    .from(recommendedArticle)
+    .innerJoin(article, eq(recommendedArticle.articleId, article.id));
 }
 
 export async function getCategories() {
-  const result = await db.query.articles.findMany({
-    where: isNull(articles.parentID),
+  const result = await db.query.article.findMany({
+    where: isNull(article.parentId),
     columns: {
       title: true,
       id: true
@@ -98,26 +161,27 @@ export async function getCategories() {
 }
 
 export async function getArticleNames() {
-  const parent = alias(articles, 'parent');
+  const parent = alias(article, 'parent');
 
   return db
     .select({
-      title: articles.title,
-      id: articles.id,
+      title: article.title,
+      id: article.id,
       parentTitle: parent.title
     })
-    .from(articles)
-    .leftJoin(parent, eq(parent.id, articles.parentID));
+    .from(article)
+    .leftJoin(parent, eq(parent.id, article.parentId));
 }
 
 export async function getArticlesStats() {
-  return (
-    await db
-      .select({
-        articles: count(articles.id),
-        authors: countDistinct(articles.author),
-        reviews: sql`COUNT(CASE WHEN "parentID" = 9 THEN 1 END)`
-      })
-      .from(articles)
-  )[0];
+  const parent = alias(article, 'parent');
+
+  return db
+    .select({
+      title: article.title,
+      id: article.id,
+      parentTitle: parent.title
+    })
+    .from(article)
+    .leftJoin(parent, eq(parent.id, article.parentId));
 }

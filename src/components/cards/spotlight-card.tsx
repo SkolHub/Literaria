@@ -6,9 +6,11 @@ import { cn } from '@/lib/utils';
 
 const SpotlightCard = ({
   article,
-  className = ''
+  className = '',
+  style
 }: {
   article: Article;
+  style?: React.CSSProperties;
   className?: string;
 }) => {
   const { title, author, createdAt } = article;
@@ -16,9 +18,10 @@ const SpotlightCard = ({
   return (
     <div
       className={cn(
-        'flex flex-col justify-around rounded-[3rem] bg-[#5b5a36] p-14 laptop:p-10 tablet:rounded-[2rem] tablet:p-8',
+        'flex flex-col justify-around rounded-[3rem] p-14 laptop:p-10 tablet:rounded-[2rem] tablet:p-8',
         className
       )}
+      style={style}
     >
       <div>
         <SmallTitle className='m-0 text-white'>{title}</SmallTitle>

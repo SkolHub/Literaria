@@ -1,4 +1,5 @@
 import NextSectionCard from '@/components/cards/next-section-card';
+import PhotoWithBlur from '@/components/misc/photo-with-blur';
 import MainTitle from '@/components/typography/main-title';
 import { Article } from '@/lib/types';
 
@@ -21,8 +22,8 @@ export default function ({ article }: { article: Article }) {
         />
       </div>
       <div className='h-100% flex min-w-[30%] max-w-[30%] flex-col gap-10 tablet:gap-6 mobile:max-w-none mobile:flex-row mobile:gap-3'>
-        <img
-          className='max-h-[70%] rounded-[3rem] object-cover tablet:rounded-[2rem]'
+        <PhotoWithBlur
+          className='max-h-[70%] rounded-[3rem] tablet:rounded-[2rem]'
           src={article.image}
           alt='Directory description'
         />

@@ -2,6 +2,7 @@ import OpenLinkButton from '@/components/buttons/open-link-button';
 import Timestamp from '@/components/misc/timestamp';
 import { ArticlePreview } from '@/lib/types';
 import Link from 'next/link';
+import PhotoWithBlur from '@/components/misc/photo-with-blur';
 
 const LargeArticleCard = ({
   article,
@@ -17,8 +18,8 @@ const LargeArticleCard = ({
       href={`/article/${id}`}
       className={`relative flex h-full grow ${className}`}
     >
-      <img
-        className='h-full w-full cursor-pointer rounded-[3rem] object-cover'
+      <PhotoWithBlur
+        className='h-full w-full cursor-pointer rounded-[3rem]'
         src={image}
         alt={title}
       />

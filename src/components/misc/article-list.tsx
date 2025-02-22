@@ -31,16 +31,16 @@ export default ({
   }, []);
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`h-full ${className}`}>
       <Swiper
-        className={'mobile:h-[75dvh]'}
+        className={'h-full'}
         ref={ref}
         spaceBetween={30}
         slidesPerView={'auto'}
         loop={true}
-        autoplay={{
-          delay: 3000
-        }}
+        // autoplay={{
+        //   delay: 3000
+        // }}
         breakpoints={{
           1600: {
             spaceBetween: 50,

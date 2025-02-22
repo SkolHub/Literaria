@@ -2,6 +2,7 @@
 
 import OpenLinkButton from '@/components/buttons/open-link-button';
 import Link from 'next/link';
+import PhotoWithBlur from '@/components/misc/photo-with-blur';
 
 export default function ({
   text,
@@ -16,9 +17,9 @@ export default function ({
 }) {
   return (
     <div className={`relative grow ${className}`}>
-      <img
+      <PhotoWithBlur
         src={image}
-        className='h-full w-full rounded-[2rem] object-cover'
+        className='h-full w-full rounded-[2rem]'
         alt='Next section'
       />
       <div className='absolute left-0 top-0 flex h-full w-full flex-col items-center justify-center gap-4 rounded-[2rem] p-4 backdrop-blur-[16px] backdrop-brightness-50'>

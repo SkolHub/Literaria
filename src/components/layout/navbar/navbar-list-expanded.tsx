@@ -65,13 +65,14 @@ export default function ({
                 <Link
                   href={`/article/${category.id}`}
                   className={
-                    category.children?.length ? 'title-label' : 'small-title'
+                    (category.children?.length ? 'title-label' : 'small-title') + ' flex items-center gap-3'
                   }
                   onClick={() => {
                     setExpanded(false);
                   }}
                 >
                   {category.title}
+                  <i className='fa fa-chevron-right text-sm' />
                 </Link>
                 <div className='flex flex-col'>
                   {category.children?.map((child, index) => (

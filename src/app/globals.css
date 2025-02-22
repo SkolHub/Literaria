@@ -8,6 +8,10 @@ html {
     scroll-behavior: smooth;
 }
 
+main {
+    scroll-behavior: smooth;
+}
+
 .swiper {
     padding-left: 2rem !important;
 }
@@ -52,7 +56,7 @@ html {
 }
 
 .section {
-    @apply h-[100svh] w-screen box-border flex snap-start;
+    @apply h-dvh w-screen box-border flex snap-start;
 }
 
 main {
@@ -64,19 +68,27 @@ nextjs-portal {
 }
 
 .small-title {
-    @apply text-3xl font-semibold laptop:text-2xl;
+    @apply text-2xl font-semibold py-1;
 }
 
 .title-label {
-    @apply text-base font-medium laptop:text-xs;
+    @apply text-lg font-medium;
 }
 
 .nav-title {
-    @apply leading-[1.3rem] text-[.9rem] font-medium big-laptop:text-[.82rem] big-laptop:leading-[1.15rem] laptop:text-xs tablet:text-[.6rem] tablet:leading-[.8rem] small-tablet:text-[.4rem] small-tablet:leading-[.6rem];
+    @apply text-[1.2rem] leading-[1.8rem] font-medium
+    big-laptop:text-[1.2rem] big-laptop:leading-[1.5rem]
+    laptop:text-[1rem] laptop:leading-[1.25rem]
+    tablet:text-[0.9rem] tablet:leading-[1.1rem]
+    small-tablet:text-[0.7rem] small-tablet:leading-[0.9rem] hover:underline pb-1.5;
 }
 
 .nav-item {
-    @apply text-[1.6rem] leading-[2rem] font-semibold big-laptop:text-[1.3rem] big-laptop:leading-[1.6rem] laptop:text-[1.1rem] laptop:leading-[1.35rem] tablet:text-[1rem] tablet:leading-[1.2rem] small-tablet:text-[.8rem] small-tablet:leading-[1rem];
+    @apply text-[1.6rem] leading-[2.2rem] font-semibold
+    big-laptop:text-[1.3rem] big-laptop:leading-[1.9rem]
+    laptop:text-[1.1rem] laptop:leading-[1.7rem]
+    tablet:text-[1rem] tablet:leading-[1.6rem]
+    small-tablet:text-[.8rem] small-tablet:leading-[1.4rem] hover:underline;
 }
 
 @layer base {
