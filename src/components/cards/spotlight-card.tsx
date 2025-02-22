@@ -18,16 +18,18 @@ const SpotlightCard = ({
   return (
     <div
       className={cn(
-        'flex flex-col justify-around rounded-[3rem] p-14 laptop:p-10 tablet:rounded-[2rem] tablet:p-8',
+        'group flex flex-col justify-around rounded-[3rem] p-14 laptop:p-10 tablet:rounded-[2rem] tablet:p-8',
         className
       )}
       style={style}
     >
-      <div>
-        <SmallTitle className='m-0 text-white'>{title}</SmallTitle>
-        <p className='mx-0 mb-4 pt-4 text-xl font-medium text-[white]'>
+      <div className='flex flex-col'>
+        <SmallTitle className='m-0 text-white group-hover:underline'>
+          {title}
+        </SmallTitle>
+        <span className='mx-0 mb-4 pt-4 text-xl font-medium text-[white]'>
           {author}
-        </p>
+        </span>
       </div>
       <div className='flex items-center justify-between gap-4'>
         <label className='mt-[1%] text-base font-medium text-[white]'>

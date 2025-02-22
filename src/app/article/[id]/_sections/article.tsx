@@ -18,7 +18,7 @@ export default function ({ article }: { article: Article }) {
         <BackButton className='pb-4' />
         <div className='relative pb-4'>
           <PhotoWithBlur
-            className='h-[70vh] w-full rounded-[3rem]'
+            className='h-[70vh] w-full rounded-[3rem] mobile:h-[50vh]'
             src={article.image}
             alt={article.title}
           />

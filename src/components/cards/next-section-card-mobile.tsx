@@ -1,8 +1,8 @@
 'use client';
 
 import OpenLinkButton from '@/components/buttons/open-link-button';
-import Link from 'next/link';
 import PhotoWithBlur from '@/components/misc/photo-with-blur';
+import Link from 'next/link';
 
 export default function ({
   text,
@@ -16,7 +16,7 @@ export default function ({
   anchorScroll: string;
 }) {
   return (
-    <div className={`relative grow ${className}`}>
+    <Link className={`relative grow ${className}`} href={anchorScroll}>
       <PhotoWithBlur
         src={image}
         className='h-full w-full rounded-[2rem]'
@@ -26,10 +26,8 @@ export default function ({
         <label className='left-0 top-0 text-center font-semibold text-white'>
           {text}
         </label>
-        <Link href={anchorScroll}>
-          <OpenLinkButton className='flex rotate-[135deg] scale-90' />
-        </Link>
+        <OpenLinkButton className='flex rotate-[135deg] scale-90' />
       </div>
-    </div>
+    </Link>
   );
 }

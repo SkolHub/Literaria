@@ -1,18 +1,13 @@
 'use client';
 
+import SliderArticles from '@/app/_sections/landing/slider-articles';
 import SliderImages from '@/app/_sections/landing/slider-images';
 import SliderIndicator from '@/app/_sections/landing/slider-indicator';
 import SliderLabel from '@/app/_sections/landing/slider-label';
 import useCarousel from '@/app/_sections/landing/use-carousel';
 import NextItemButton from '@/components/buttons/next-item-button';
-import OpenLinkButton from '@/components/buttons/open-link-button';
-import { IncludeBorder } from '@/components/rounded-borders/include-border';
-import { RoundedBorder } from '@/components/rounded-borders/rounded-border';
-import { RoundedTextBorder } from '@/components/rounded-borders/rounded-text-border';
 import { categories } from '@/lib/data/categories';
 import { Article } from '@/lib/types';
-import Link from 'next/link';
-import SliderArticles from '@/app/_sections/landing/slider-articles';
 
 export default function Carousel({
   literatureArticle,

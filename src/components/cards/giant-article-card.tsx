@@ -13,7 +13,10 @@ const GiantArticleCard = ({ article }: { article: Article }) => {
   const { image, title, author, createdAt } = article ?? {};
 
   return (
-    <Link href={'/article/' + article.id} className='relative flex h-0 grow'>
+    <Link
+      href={'/article/' + article.id}
+      className='group relative flex h-0 grow'
+    >
       <PhotoWithBlur
         className='w-full cursor-pointer rounded-[3rem] laptop:rounded-[2rem]'
         src={image}
@@ -28,7 +31,7 @@ const GiantArticleCard = ({ article }: { article: Article }) => {
           paddingRight={12}
           borderRadius={16}
         >
-          <RoundedTextBorder className='w-[450px] text-end text-3xl font-semibold text-black mobile:w-[80vw] mobile:text-xl'>
+          <RoundedTextBorder className='w-[450px] text-end text-3xl font-semibold text-black group-hover:underline mobile:w-[80vw] mobile:text-xl'>
             {title}
           </RoundedTextBorder>
           <IncludeBorder>

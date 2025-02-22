@@ -1,5 +1,5 @@
-import { Article } from '@/lib/types';
 import PhotoWithBlur from '@/components/misc/photo-with-blur';
+import { Article } from '@/lib/types';
 
 const SubCategoryCard = ({ article }: { article: Article }) => {
   const { image, title } = article;

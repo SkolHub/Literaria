@@ -5,6 +5,7 @@ import { IncludeBorder } from '@/components/rounded-borders/include-border';
 import { RoundedBorder } from '@/components/rounded-borders/rounded-border';
 import { RoundedTextBorder } from '@/components/rounded-borders/rounded-text-border';
 import { ArticlePreview } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
 const LargeArticleCard = ({
@@ -19,14 +20,14 @@ const LargeArticleCard = ({
   return (
     <Link
       href={`/article/${id}`}
-      className={`relative flex h-full grow ${className}`}
+      className={cn('group relative flex h-full grow', className)}
     >
       <PhotoWithBlur
-        className='h-full w-full cursor-pointer rounded-[3rem] laptop:rounded-[2rem]'
+        className='h-full w-full cursor-pointer rounded-[3rem] tablet:rounded-[2rem]'
         src={image}
         alt={title}
       />
-      <div className='absolute right-8 top-8 flex flex-col items-end gap-8 px-3 py-1 laptop:right-3 laptop:top-3 laptop:gap-4'>
+      <div className='absolute right-8 top-8 flex flex-col items-end gap-8 px-3 py-1 tablet:right-3 tablet:top-3 tablet:gap-4'>
         <RoundedBorder
           className='flex flex-col items-end'
           paddingTop={4}
@@ -35,7 +36,7 @@ const LargeArticleCard = ({
           paddingRight={12}
           borderRadius={16}
         >
-          <RoundedTextBorder className='w-[450px] text-end text-3xl font-semibold text-black laptop:w-[30vw] laptop:text-xl mobile:w-[80vw]'>
+          <RoundedTextBorder className='w-[450px] text-end text-3xl font-semibold text-black group-hover:underline tablet:w-[30vw] tablet:text-xl mobile:w-[80vw]'>
             {title}
           </RoundedTextBorder>
           <IncludeBorder>

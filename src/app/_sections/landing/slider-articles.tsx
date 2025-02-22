@@ -24,17 +24,17 @@ export default function SliderArticles({
       {currentSlide === 2 && (
         <Link
           href={'/gallery'}
-          className='absolute left-[4.4rem] top-[10.5rem] flex flex-col items-start gap-6 px-3 py-1 mobile:left-[1.5rem] mobile:top-[6rem] mobile:gap-5'
+          className='group absolute left-[4.4rem] top-[11rem] flex flex-col items-start gap-6 px-3 py-1 mobile:left-[1.5rem] mobile:top-[6.5rem] mobile:gap-5'
         >
           <RoundedBorder
             className='flex flex-col items-start'
-            paddingTop={4}
+            paddingTop={8}
             paddingBottom={8}
             paddingLeft={12}
             paddingRight={12}
             borderRadius={16}
           >
-            <RoundedTextBorder className='flex w-[450px] text-2xl font-semibold text-black mobile:w-[80vw] mobile:text-xl'>
+            <RoundedTextBorder className='flex w-[450px] text-2xl font-semibold text-black group-hover:underline mobile:w-[80vw] mobile:text-xl'>
               Mergi la galerie
             </RoundedTextBorder>
           </RoundedBorder>
@@ -62,11 +62,11 @@ function SliderArticle({
         '/article/' +
         (currentSlide === 0 ? literatureArticle.id : moviesArticle.id)
       }
-      className='absolute left-[4.4rem] top-[10.5rem] flex flex-col items-start gap-6 px-3 py-1 mobile:left-[1.5rem] mobile:top-[6rem] mobile:gap-5'
+      className='group absolute left-[4.4rem] top-[11rem] flex flex-col items-start gap-6 px-3 py-1 mobile:left-[1.5rem] mobile:top-[6.5rem] mobile:gap-5'
     >
       <RoundedBorder
         className='flex flex-col items-start'
-        paddingTop={4}
+        paddingTop={8}
         paddingBottom={8}
         paddingLeft={12}
         paddingRight={12}
@@ -75,12 +75,14 @@ function SliderArticle({
         <IncludeBorder>
           <div className='flex items-center gap-1.5'>
             <i className='fa fa-clock-rotate-left' />
-            {currentSlide === 0
-              ? 'Ultimul articol din literatură'
-              : 'Ultima recenzie de film'}
+            <span className='font-semibold'>
+              {currentSlide === 0
+                ? 'Ultimul articol din literatură'
+                : 'Ultima recenzie de film'}
+            </span>
           </div>
         </IncludeBorder>
-        <RoundedTextBorder className='w-[450px] text-3xl font-semibold text-black laptop:w-[30vw] mobile:w-[70vw] mobile:text-xl'>
+        <RoundedTextBorder className='w-[450px] text-3xl font-semibold text-black group-hover:underline laptop:w-[30vw] mobile:w-[70vw] mobile:text-xl'>
           {currentSlide === 0 ? literatureArticle.title : moviesArticle.title}
         </RoundedTextBorder>
         <IncludeBorder>
