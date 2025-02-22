@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
+export default function Paragraph(props: any) {
+  const { className, style, ...rest } = props;
 
-export default function Paragraph({ children }: { children: ReactNode }) {
-  return <p>{children}</p>;
+  return <p {...rest} className='pb-3' />;
 }

@@ -1,3 +1,4 @@
+import MarkdownRenderer from '@/components/markdown/markdown-renderer';
 import { Article } from '@/lib/types';
 
 export default function ({ article }: { article: Article }) {
@@ -14,12 +15,9 @@ export default function ({ article }: { article: Article }) {
         {(article as any)?.parent?.title ?? ''} /{' '}
         <span className='font-bold'>{article.title}</span>
       </label>
-      <article
-        className='py-12'
-        dangerouslySetInnerHTML={{
-          __html: (article.content as any)?.content ?? ''
-        }}
-      ></article>
+      <article className='py-12'>
+        <MarkdownRenderer>{(article.content as any).content}</MarkdownRenderer>
+      </article>
     </section>
   );
 }
