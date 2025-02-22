@@ -66,34 +66,38 @@ export default function ({ article }: { article: Article }) {
           }}
         />
       </section>
-      <section className='relative mx-[8rem] flex flex-col mobile:mx-0 mobile:pt-10'>
-        <SmallTitle className='mb-8 px-8 text-left text-4xl font-bold italic laptop:px-5 laptop:text-3xl'>
-          Alte articole din {article.parent?.title}
-        </SmallTitle>
-        <ArticleList className='h-[32rem] mobile:h-[20rem]'>
-          {article.siblings.map((sibling, index) => (
-            <MediumArticleCard
-              article={sibling}
-              key={index}
-              titleClassName='mobile:text-xl text-2xl'
-            />
-          ))}
-        </ArticleList>
-      </section>
-      <section className='relative mx-[8rem] flex flex-col mobile:mx-0 mobile:pt-0'>
-        <SmallTitle className='mb-8 px-8 text-left text-4xl font-bold italic laptop:px-5 laptop:text-3xl'>
-          Alte articole scrise de {article.author}
-        </SmallTitle>
-        <ArticleList className='h-[32rem] mobile:h-[20rem]'>
-          {article.authorOtherArticles.map((sibling, index) => (
-            <MediumArticleCard
-              article={sibling}
-              key={index}
-              titleClassName='mobile:text-xl text-2xl'
-            />
-          ))}
-        </ArticleList>
-      </section>
+      {article.siblings.length > 0 && (
+        <section className='relative mx-[8rem] flex flex-col mobile:mx-0 mobile:pt-10'>
+          <SmallTitle className='mb-8 px-8 text-left text-4xl font-bold italic laptop:px-5 laptop:text-3xl'>
+            Alte articole din {article.parent?.title}
+          </SmallTitle>
+          <ArticleList className='h-[30rem] mobile:h-[20rem]'>
+            {article.siblings.map((sibling, index) => (
+              <MediumArticleCard
+                article={sibling}
+                key={index}
+                titleClassName='mobile:text-xl text-2xl'
+              />
+            ))}
+          </ArticleList>
+        </section>
+      )}
+      {article.authorOtherArticles.length > 0 && (
+        <section className='relative mx-[8rem] flex flex-col mobile:mx-0 mobile:pt-0'>
+          <SmallTitle className='mb-8 px-8 text-left text-4xl font-bold italic laptop:px-5 laptop:text-3xl'>
+            Alte articole scrise de {article.author}
+          </SmallTitle>
+          <ArticleList className='h-[30rem] mobile:h-[20rem]'>
+            {article.authorOtherArticles.map((sibling, index) => (
+              <MediumArticleCard
+                article={sibling}
+                key={index}
+                titleClassName='mobile:text-xl text-2xl'
+              />
+            ))}
+          </ArticleList>
+        </section>
+      )}
     </>
   );
 }

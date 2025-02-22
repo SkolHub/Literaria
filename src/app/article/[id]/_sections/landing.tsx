@@ -43,6 +43,9 @@ export default async function ({ article }: { article: Article }) {
             <SpotlightCardMobile
               className='hidden w-1/2 mobile:flex'
               article={article.children[article.children.length - 2]}
+              style={{
+                backgroundColor: color
+              }}
             />
           )}
           <NextSectionCardMobile

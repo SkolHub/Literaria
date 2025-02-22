@@ -35,7 +35,7 @@ const GiantArticleCard = ({ article }: { article: Article }) => {
             <label>{author}</label>
           </IncludeBorder>
         </RoundedBorder>
-        <OpenLinkButton className='' />
+        <OpenLinkButton />
       </div>
       <Timestamp
         className='absolute bottom-8 right-8 laptop:bottom-3 laptop:right-3'

@@ -19,7 +19,7 @@ export default function ({
     <Link href={`/article/${id}`} className={`flex flex-col ${className}`}>
       <div className='relative flex h-0 grow'>
         <PhotoWithBlur
-          className='h-auto w-full cursor-pointer rounded-[3rem]'
+          className='h-auto w-full cursor-pointer rounded-[3rem] laptop:rounded-[2rem]'
           src={image}
           alt={title}
         />
@@ -31,7 +31,7 @@ export default function ({
       </div>
       <div className='mt-4 flex flex-col'>
         <TitleLabel>{author}</TitleLabel>
-        <SmallTitle className='mx-0 mb-0 mt-4'>{title}</SmallTitle>
+        <SmallTitle className='mx-0 mb-0'>{title}</SmallTitle>
       </div>
     </Link>
   );

@@ -7,7 +7,7 @@ export default function useCarousel() {
   useEffect(() => {
     const changeSlide = setInterval(() => {
       setCurrentSlide((currentSlide + 1) % categories.length);
-    }, 2000);
+    }, 3500);
 
     return () => {
       clearInterval(changeSlide);

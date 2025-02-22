@@ -1,3 +1,5 @@
+'use client';
+
 import NextItemButton from '@/components/buttons/next-item-button';
 import { categories } from '@/lib/data/categories';
 import { motion } from 'framer-motion';

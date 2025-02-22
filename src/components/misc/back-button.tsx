@@ -14,7 +14,16 @@ export default function BackButton({ className }: { className?: string }) {
       )}
     >
       <i className='fa fa-chevron-left text-lg' />
-      <span className='text-lg hover:underline' onClick={() => router.back()}>
+      <span
+        className='text-lg hover:underline'
+        onClick={() => {
+          if (window.history?.length && window.history.length > 1) {
+            router.back();
+          } else {
+            router.replace('/');
+          }
+        }}
+      >
         Înapoi
       </span>
     </div>

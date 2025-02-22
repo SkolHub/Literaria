@@ -1,0 +1,52 @@
+'use client';
+
+import SliderImages from '@/app/_sections/landing/slider-images';
+import SliderIndicator from '@/app/_sections/landing/slider-indicator';
+import SliderLabel from '@/app/_sections/landing/slider-label';
+import useCarousel from '@/app/_sections/landing/use-carousel';
+import NextItemButton from '@/components/buttons/next-item-button';
+import OpenLinkButton from '@/components/buttons/open-link-button';
+import { IncludeBorder } from '@/components/rounded-borders/include-border';
+import { RoundedBorder } from '@/components/rounded-borders/rounded-border';
+import { RoundedTextBorder } from '@/components/rounded-borders/rounded-text-border';
+import { categories } from '@/lib/data/categories';
+import { Article } from '@/lib/types';
+import Link from 'next/link';
+import SliderArticles from '@/app/_sections/landing/slider-articles';
+
+export default function Carousel({
+  literatureArticle,
+  moviesArticle
+}: {
+  literatureArticle: Article;
+  moviesArticle: Article;
+}) {
+  const { currentSlide, setCurrentSlide } = useCarousel();
+
+  const handleNextItemClick = () => {
+    setCurrentSlide((currentSlide + 1) % categories.length);
+  };
+
+  return (
+    <div className='relative box-border h-[73vh] w-[88vw] rounded-[3.5rem] bg-cover bg-center mobile:h-[80vh]'>
+      <SliderImages currentSlide={currentSlide} />
+      <SliderArticles
+        literatureArticle={literatureArticle}
+        moviesArticle={moviesArticle}
+        currentSlide={currentSlide}
+      />
+      <SliderLabel
+        logo={categories[currentSlide].logo}
+        title={categories[currentSlide].title}
+      />
+      <SliderIndicator
+        currentSlide={currentSlide}
+        setCurrentSlide={setCurrentSlide}
+      />
+      <NextItemButton
+        className='absolute right-4 top-1/2 hidden -translate-y-1/2 mobile:flex'
+        onClick={handleNextItemClick}
+      />
+    </div>
+  );
+}
