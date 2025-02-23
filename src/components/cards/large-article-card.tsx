@@ -27,20 +27,28 @@ const LargeArticleCard = ({
         src={image}
         alt={title}
       />
-      <div className='absolute right-8 top-8 flex flex-col items-end gap-8 px-3 py-1 tablet:right-3 tablet:top-3 tablet:gap-4'>
+      <div className='absolute -top-3 right-0 flex flex-col items-end gap-8 px-3 py-1 tablet:gap-4'>
         <RoundedBorder
-          className='flex flex-col items-end'
+          className='flex justify-end'
           paddingTop={4}
           paddingBottom={8}
           paddingLeft={12}
           paddingRight={12}
           borderRadius={16}
         >
-          <RoundedTextBorder className='w-[450px] text-end text-3xl font-semibold text-black group-hover:underline tablet:w-[30vw] tablet:text-xl mobile:w-[80vw]'>
-            {title}
-          </RoundedTextBorder>
+          <div className='flex flex-col items-end'>
+            <IncludeBorder>
+              <div className='h-0 w-full' />
+            </IncludeBorder>
+            <RoundedTextBorder className='w-[450px] pt-2 text-end text-3xl font-semibold text-black group-hover:underline tablet:w-[30vw] tablet:text-xl mobile:w-[80vw]'>
+              {title}
+            </RoundedTextBorder>
+            <IncludeBorder>
+              <label>{author}</label>
+            </IncludeBorder>
+          </div>
           <IncludeBorder>
-            <label>{author}</label>
+            <div className='absolute -right-6 top-0 h-80 w-0' />
           </IncludeBorder>
         </RoundedBorder>
         <OpenLinkButton />

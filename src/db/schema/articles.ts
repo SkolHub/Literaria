@@ -1,5 +1,5 @@
-import { articleContents } from '@db/article-contents';
-import { highlightArticles } from '@db/highlight-articles';
+import { articleContents } from '@/db/schema/article-contents';
+import { highlightArticles } from '@/db/schema/highlight-articles';
 import { relations } from 'drizzle-orm';
 import { integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 
@@ -11,6 +11,8 @@ export const articles = pgTable('articles', {
   title: text('title').notNull(),
   author: text('author').notNull(),
   image: text('image').notNull(),
+  path: integer('path').notNull().array(),
+  categoryID: integer('category_id'),
   parentID: integer('parent_id'),
   originalID: integer('original_id')
 });

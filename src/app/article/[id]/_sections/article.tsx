@@ -16,13 +16,13 @@ export default function ({ article }: { article: Article }) {
     <>
       <section className='px-[9rem] pt-32 mobile:px-4 mobile:pt-20'>
         <BackButton className='pb-4' />
-        <div className='relative pb-4'>
+        <div className='relative mb-4'>
           <PhotoWithBlur
             className='h-[70vh] w-full rounded-[3rem] mobile:h-[50vh]'
             src={article.image}
             alt={article.title}
           />
-          <div className='absolute bottom-10 flex w-full flex-col items-center gap-8 px-3 py-1'>
+          <div className='absolute -bottom-2 flex w-full flex-col items-center gap-8 px-3 py-1'>
             <RoundedBorder
               className='flex flex-col items-center'
               paddingTop={4}
@@ -35,7 +35,12 @@ export default function ({ article }: { article: Article }) {
                 {article.title}
               </RoundedTextBorder>
               <IncludeBorder>
-                <label className='mobile:text-sm'>{article.author}</label>
+                <label className='py-2.5 mobile:text-sm'>
+                  {article.author}
+                </label>
+              </IncludeBorder>
+              <IncludeBorder>
+                <div className='h-0 w-80' />
               </IncludeBorder>
             </RoundedBorder>
           </div>
@@ -66,7 +71,7 @@ export default function ({ article }: { article: Article }) {
           }}
         />
       </section>
-      {article.siblings.length > 0 && (
+      {artile.siblings.length > 0 && (
         <section className='relative mx-[8rem] flex flex-col mobile:mx-0 mobile:pt-10'>
           <SmallTitle className='mb-8 px-8 text-left text-4xl font-bold italic laptop:px-5 laptop:text-3xl'>
             Alte articole din {article.parent?.title}
