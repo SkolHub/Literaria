@@ -38,7 +38,7 @@ const LargeArticleCard = ({
         >
           <div className='flex flex-col items-end'>
             <IncludeBorder>
-              <div className='h-0 w-full' />
+              <div className='h-0 w-[500px]' />
             </IncludeBorder>
             <RoundedTextBorder className='w-[450px] pt-2 text-end text-3xl font-semibold text-black group-hover:underline tablet:w-[30vw] tablet:text-xl mobile:w-[80vw]'>
               {title}
