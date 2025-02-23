@@ -31,7 +31,7 @@ export default function ({ article }: { article: Article }) {
               paddingRight={12}
               borderRadius={16}
             >
-              <RoundedTextBorder className='w-[450px] text-center text-3xl font-semibold text-black mobile:w-[80vw] mobile:text-xl'>
+              <RoundedTextBorder className='text-pretty w-[450px] text-center text-3xl font-semibold text-black mobile:w-[80vw] mobile:text-xl'>
                 {article.title}
               </RoundedTextBorder>
               <IncludeBorder>
@@ -71,12 +71,12 @@ export default function ({ article }: { article: Article }) {
           }}
         />
       </section>
-      {artile.siblings.length > 0 && (
-        <section className='relative mx-[8rem] flex flex-col mobile:mx-0 mobile:pt-10'>
+      {article.siblings.length > 0 && (
+        <section className='relative mx-[8rem] flex flex-col pt-10 mobile:mx-0'>
           <SmallTitle className='mb-8 px-8 text-left text-4xl font-bold italic laptop:px-5 laptop:text-3xl'>
             Alte articole din {article.parent?.title}
           </SmallTitle>
-          <ArticleList className='h-[30rem] mobile:h-[20rem]'>
+          <ArticleList className='!h-[32rem] mobile:!h-[20rem]'>
             {article.siblings.map((sibling, index) => (
               <MediumArticleCard
                 article={sibling}
@@ -92,7 +92,7 @@ export default function ({ article }: { article: Article }) {
           <SmallTitle className='mb-8 px-8 text-left text-4xl font-bold italic laptop:px-5 laptop:text-3xl'>
             Alte articole scrise de {article.author}
           </SmallTitle>
-          <ArticleList className='h-[30rem] mobile:h-[20rem]'>
+          <ArticleList className='!h-[32rem] mobile:!h-[20rem]'>
             {article.authorOtherArticles.map((sibling, index) => (
               <MediumArticleCard
                 article={sibling}

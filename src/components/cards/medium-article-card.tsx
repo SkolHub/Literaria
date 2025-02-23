@@ -25,7 +25,7 @@ const MediumArticleCard = ({
     >
       <div className='relative h-full w-[40rem] overflow-hidden laptop:w-[30rem] mobile:w-[90vw]'>
         <PhotoWithBlur
-          className='absolute inset-0 cursor-pointer rounded-[3rem] mobile:rounded-3xl'
+          className='absolute inset-0 cursor-pointer rounded-[3rem] brightness-90 mobile:rounded-3xl'
           src={image}
           alt={title}
         />
@@ -38,7 +38,7 @@ const MediumArticleCard = ({
       <TitleLabel className='mt-4'>{author}</TitleLabel>
       <SmallTitle
         className={cn(
-          'mt-4 line-clamp-3 h-32 min-h-32 laptop:h-24 laptop:min-h-24 group-hover:underline mobile:mt-2',
+          'mt-4 line-clamp-3 h-32 min-h-32 group-hover:underline laptop:h-24 laptop:min-h-24 mobile:mt-2',
           titleClassName
         )}
       >

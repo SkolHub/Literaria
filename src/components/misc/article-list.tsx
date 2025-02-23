@@ -11,10 +11,12 @@ SwiperCore.use([Autoplay]);
 
 export default ({
   children,
-  className = ''
+  className = '',
+  articleCount = 2
 }: {
   children: ReactNode;
   className?: string;
+  articleCount?: number;
 }) => {
   const ref = useRef<SwiperRef>(null);
 
@@ -63,18 +65,22 @@ export default ({
           </SwiperSlide>
         ))}
       </Swiper>
-      <NextItemButton
-        className='swiper-button-next absolute left-8 top-1/2 z-[1] -translate-y-1/2 rotate-180'
-        onClick={() => {
-          ref.current!.swiper.slidePrev();
-        }}
-      />
-      <NextItemButton
-        className='swiper-button-next absolute right-8 top-1/2 z-[1] -translate-y-1/2'
-        onClick={() => {
-          ref.current!.swiper.slideNext();
-        }}
-      />
+      {articleCount > 2 && (
+        <>
+          <NextItemButton
+            className='swiper-button-next absolute left-8 top-1/2 z-[1] -translate-y-1/2 rotate-180'
+            onClick={() => {
+              ref.current!.swiper.slidePrev();
+            }}
+          />
+          <NextItemButton
+            className='swiper-button-next absolute right-8 top-1/2 z-[1] -translate-y-1/2'
+            onClick={() => {
+              ref.current!.swiper.slideNext();
+            }}
+          />
+        </>
+      )}
     </div>
   );
 };

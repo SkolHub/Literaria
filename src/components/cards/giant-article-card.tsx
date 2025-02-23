@@ -18,7 +18,7 @@ const GiantArticleCard = ({ article }: { article: Article }) => {
       className='group relative flex h-0 grow'
     >
       <PhotoWithBlur
-        className='w-full cursor-pointer rounded-[3rem] laptop:rounded-[2rem]'
+        className='w-full cursor-pointer rounded-[3rem] brightness-90 laptop:rounded-[2rem]'
         src={image}
         alt={title}
       />
@@ -31,7 +31,7 @@ const GiantArticleCard = ({ article }: { article: Article }) => {
           paddingRight={12}
           borderRadius={16}
         >
-          <RoundedTextBorder className='w-[450px] text-end text-3xl font-semibold text-black group-hover:underline mobile:w-[80vw] mobile:text-xl'>
+          <RoundedTextBorder className='w-[450px] text-pretty text-end text-3xl font-semibold text-black group-hover:underline mobile:w-[80vw] mobile:text-xl'>
             {title}
           </RoundedTextBorder>
           <IncludeBorder>

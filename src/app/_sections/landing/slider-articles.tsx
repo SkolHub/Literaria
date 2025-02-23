@@ -34,7 +34,7 @@ export default function SliderArticles({
             paddingRight={12}
             borderRadius={16}
           >
-            <RoundedTextBorder className='flex w-[450px] text-2xl font-semibold text-black group-hover:underline mobile:w-[80vw] mobile:text-xl'>
+            <RoundedTextBorder className='flex w-[450px] text-pretty text-2xl font-semibold text-black group-hover:underline mobile:w-[80vw] mobile:text-xl'>
               Mergi la galerie
             </RoundedTextBorder>
           </RoundedBorder>
@@ -82,7 +82,7 @@ function SliderArticle({
             </span>
           </div>
         </IncludeBorder>
-        <RoundedTextBorder className='w-[450px] text-3xl font-semibold text-black group-hover:underline laptop:w-[30vw] mobile:w-[70vw] mobile:text-xl'>
+        <RoundedTextBorder className='w-[450px] text-pretty text-3xl font-semibold text-black group-hover:underline laptop:w-[30vw] mobile:w-[70vw] mobile:text-xl'>
           {currentSlide === 0 ? literatureArticle.title : moviesArticle.title}
         </RoundedTextBorder>
         <IncludeBorder>
