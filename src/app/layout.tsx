@@ -1,14 +1,17 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import '../ui/globals.scss';
-import { ReactNode } from 'react';
-import NavBar from '@/components/navbar/NavBar';
-import { getArticleNames, getCategories } from '@/lib/api/article';
-import Script from 'next/script';
-import { Analytics } from '@vercel/analytics/react';
+import { isLogged } from '@/api/admin/auth';
+import { getArticleNames, getCategories } from '@/api/article';
+import Navbar from '@/components/layout/navbar/navbar';
+import '@/lib/fontawesome/css/fa.css';
+import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import type { Metadata } from 'next';
+import { Plus_Jakarta_Sans } from 'next/font/google';
+import { ReactNode } from 'react';
+import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin']
+});
 
 export const metadata: Metadata = {
   title: 'Literaria',
@@ -19,54 +22,26 @@ export const metadata: Metadata = {
   }
 };
 
-export default async ({ children }: { children: ReactNode }) => {
+export default async function RootLayout({
+  children
+}: Readonly<{
+  children: ReactNode;
+}>) {
   const categories = await getCategories();
   const articles = await getArticleNames();
 
+  const isAdmin = await isLogged();
+
   return (
-    <html lang='ro'>
-      <head>
-        {/*<Script*/}
-        {/*  async*/}
-        {/*  src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2555769076822619'*/}
-        {/*  crossOrigin='anonymous'*/}
-        {/*></Script>*/}
-        {/*<Script async={true} data-cfasync={'false'} src="//pl23427871.highcpmgate.com/d473607904fb2e0f363661d71b81ba82/invoke.js"></Script>*/}
-        {/*
-        <Script
-          async
-          src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1931536699775420'
-          crossOrigin='anonymous'
-        ></Script>
-        */}
-        <meta name="ddosattack-target-verify" content="9ba0b59eb6de2a7236d39b7a443124cb403ec1ab8472c431fa9cc6979e81b029" />
-        <Script
-          async
-          src='https://www.googletagmanager.com/gtag/js?id=G-41RQK3JR9R'
-        ></Script>
-        <Script id='google-analytics'>
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-    
-            gtag('config', 'G-41RQK3JR9R');
-          `}
-        </Script>
-      </head>
-      <body className={inter.className}>
-        <NavBar
+    <html lang='en'>
+      <body className={`${plusJakartaSans.className} antialiased`}>
+        <Navbar
+          isAdmin={isAdmin}
           categories={categories}
-          articleNames={
-            articles as {
-              title: string;
-              id: number;
-              parentTitle: string | undefined;
-            }[]
-          }
+          articleNames={articles}
         />
         <main
-          id={'main'}
+          id='main'
           className='h-[100svh] overflow-y-auto overflow-x-hidden'
         >
           {children}
@@ -76,4 +51,4 @@ export default async ({ children }: { children: ReactNode }) => {
       </body>
     </html>
   );
-};
+}

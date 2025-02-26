@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body,
+html {
+    @apply m-0 p-0 overflow-hidden;
+    scroll-behavior: smooth;
+}
+
+main {
+    scroll-behavior: smooth;
+}
+
+.swiper {
+    padding-left: 2rem !important;
+}
+
+@media screen and (max-width: 1600px) {
+    .swiper {
+        padding-left: 1.25rem !important;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .swiper {
+        padding-left: 5vw !important;
+    }
+}
+
+@media screen and (min-width: 900px) {
+    .swiper-wrapper {
+        > * {
+            max-width: min-content;
+        }
+    }
+
+    ::-webkit-scrollbar {
+        width: .7rem;
+        padding-right: .1rem;
+        margin: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+        padding-right: .1rem;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        width: .4rem;
+        background: rgba(61, 71, 86, 0.33);
+        border-radius: 1rem;
+        border: .2rem solid white;
+    }
+}
+
+.section {
+    @apply h-dvh w-screen box-border flex snap-start;
+}
+
+main {
+    scroll-snap-type: y mandatory;
+}
+
+nextjs-portal {
+    display: none;
+}
+
+.small-title {
+    @apply text-2xl font-semibold py-1;
+}
+
+.title-label {
+    @apply text-lg font-medium;
+}
+
+.nav-title {
+    @apply text-[1.2rem] leading-[1.8rem] font-medium
+    big-laptop:text-[1.2rem] big-laptop:leading-[1.5rem]
+    laptop:text-[1rem] laptop:leading-[1.25rem]
+    tablet:text-[0.9rem] tablet:leading-[1.1rem]
+    small-tablet:text-[0.7rem] small-tablet:leading-[0.9rem] hover:underline pb-1.5;
+}
+
+.nav-item {
+    @apply text-[1.6rem] leading-[2.2rem] font-semibold
+    big-laptop:text-[1.3rem] big-laptop:leading-[1.9rem]
+    laptop:text-[1.1rem] laptop:leading-[1.7rem]
+    tablet:text-[1rem] tablet:leading-[1.6rem]
+    small-tablet:text-[.8rem] small-tablet:leading-[1.4rem] hover:underline;
+}
+
+@layer base {
+    :root {
+        --radius: 0.5rem;
+    }
+}
