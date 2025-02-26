@@ -11,11 +11,9 @@ export default async function () {
   let color1: string = '#5b5a36';
   let color2: string = '#5b5a36';
 
-  if (articles[0].Article.image) {
+  if (articles[0].image) {
     try {
-      const palette = await Vibrant.from(
-        articles[0].Article.image
-      ).getPalette();
+      const palette = await Vibrant.from(articles[0].image).getPalette();
 
       color1 = palette.Muted?.hex ?? '#5b5a36';
       color2 = palette.DarkVibrant?.hex ?? '#5b5a36';
@@ -33,27 +31,27 @@ export default async function () {
       <div className='box-border flex w-full grow gap-[2%] overflow-hidden px-[2%] py-0 mobile:hidden'>
         <SmallArticleCard
           className='w-[30%] min-w-[30%]'
-          article={articles[1].Article}
+          article={articles[1]}
         />
-        <LargeArticleCard article={articles[0].Article} />
+        <LargeArticleCard article={articles[0]} />
         <SmallArticleCard
           className='w-[24%] min-w-[24%]'
-          article={articles[2].Article}
+          article={articles[2]}
         />
       </div>
       <div className='box-border hidden w-full grow flex-col gap-3 overflow-hidden px-4 py-0 mobile:flex'>
-        <LargeArticleCard className='!h-0 grow' article={articles[0].Article} />
+        <LargeArticleCard className='!h-0 grow' article={articles[0]} />
         <div className='flex max-h-[150px] gap-3'>
           <SpotlightCardMobile
             className='w-0 grow'
-            article={articles[1].Article}
+            article={articles[1]}
             style={{
               backgroundColor: color1
             }}
           />
           <SpotlightCardMobile
             className='w-0 grow'
-            article={articles[2].Article}
+            article={articles[2]}
             style={{
               backgroundColor: color2
             }}

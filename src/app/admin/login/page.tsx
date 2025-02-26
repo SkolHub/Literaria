@@ -2,8 +2,10 @@
 
 import { login } from '@/api/admin/auth';
 import SmallTitle from '@/components/typography/small-title';
+import { getAuth, signInWithEmailAndPassword } from '@firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { initFirebaseApp } from '../../../../firebase.config';
 
 export default function () {
   const router = useRouter();
@@ -12,17 +14,15 @@ export default function () {
   const [password, setPassword] = useState<string>('');
 
   async function onSubmit() {
-    // const user = await signInWithEmailAndPassword(
-    //   getAuth(initFirebaseApp()),
-    //   email,
-    //   password
-    // );
-    //
-    // await login(await user.user.getIdToken());
+    const user = await signInWithEmailAndPassword(
+      getAuth(initFirebaseApp()),
+      email,
+      password
+    );
 
-    await login('');
+    await login(await user.user.getIdToken());
 
-    router.push('/admin');
+    router.push('/admin/article/create');
   }
 
   return (
@@ -43,6 +43,7 @@ export default function () {
             }}
             className='border-primary-900 bg-background-50 sm:text-sm w-full rounded-full border p-3 text-gray-900 outline-none'
             placeholder='password'
+            type='password'
           />
           <button
             onClick={onSubmit}

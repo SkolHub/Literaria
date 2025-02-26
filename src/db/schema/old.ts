@@ -1,5 +1,4 @@
 import { config } from 'dotenv';
-import { relations } from 'drizzle-orm';
 import {
   foreignKey,
   integer,
@@ -41,25 +40,6 @@ export const article = pgTable(
     };
   }
 );
-
-export const articleRelations = relations(article, ({ one, many }) => ({
-  content: one(articleContent, {
-    fields: [article.id],
-    references: [articleContent.articleId]
-  }),
-  children: many(article, {
-    relationName: 'children'
-  }),
-  parent: one(article, {
-    relationName: 'children',
-    fields: [article.parentId],
-    references: [article.id]
-  }),
-  recommended: one(recommendedArticle, {
-    fields: [article.id],
-    references: [recommendedArticle.id]
-  })
-}));
 
 export const articleContent = pgTable('ArticleContent', {
   id: serial('id').primaryKey(),

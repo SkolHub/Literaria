@@ -26,9 +26,13 @@ export default function ({
         animate={opacity1}
       >
         <Link
-          href={`/article/${category.id}`}
-          onClick={() => {
+          href={category.url ?? `/article/${category.id}`}
+          onClick={async () => {
             setExpanded(false);
+
+            if (category.fn) {
+              await category.fn();
+            }
           }}
         >
           {category.title}
@@ -52,9 +56,13 @@ export default function ({
             }}
           >
             <Link
-              href={`/article/${directory.id}`}
-              onClick={() => {
+              href={directory.url ?? `/article/${directory.id}`}
+              onClick={async () => {
                 setExpanded(false);
+
+                if (directory.fn) {
+                  await directory.fn();
+                }
               }}
             >
               {directory.title}

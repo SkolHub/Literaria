@@ -14,13 +14,13 @@ export default async function ({ children }: { children: ReactNode }) {
       <aside className='flex h-full flex-col border-r pl-8'>
         <h2 className='mb-4 text-lg font-semibold'>Articole</h2>
         <div className='flex flex-col gap-2 pr-2'>
-          <Link href='/admin/article'>
+          <Link href='/admin/article/create'>
             <Button className='w-full' size='sm'>
               <Plus className='h-4 w-4' />
               Creează un articol
             </Button>
           </Link>
-          <Link href='/admin/article/upload'>
+          <Link href='/admin/article/draft'>
             <Button className='w-full' size='sm' variant='outline'>
               <Upload className='h-4 w-4' />
               Încarcă articole

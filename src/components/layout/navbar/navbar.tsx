@@ -1,5 +1,6 @@
 'use client';
 
+import { logout } from '@/api/admin/auth';
 import BackgroundBlur from '@/components/layout/navbar/background-blur';
 import NavbarCategories from '@/components/layout/navbar/navbar-categories';
 import NavbarListExpanded from '@/components/layout/navbar/navbar-list-expanded';
@@ -103,17 +104,19 @@ export default function ({
                 ? categories[activeCategory].children!
                 : [
                     {
-                      id: 1,
+                      url: '/admin/article/create',
                       title: 'Dashboard',
                       children: []
                     },
                     {
-                      id: 1,
+                      url: '/admin/gallery',
                       title: 'Galerie',
                       children: []
                     },
                     {
-                      id: 1,
+                      async fn() {
+                        await logout();
+                      },
                       title: 'Sign Out',
                       children: []
                     }

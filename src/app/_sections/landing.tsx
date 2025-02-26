@@ -1,6 +1,6 @@
 import { getLatestArticleWithAncestor } from '@/api/article';
-import Link from 'next/link';
 import Carousel from '@/app/_sections/landing/carousel';
+import Link from 'next/link';
 
 export default async function Landing() {
   const latestLiteratureArticle = await getLatestArticleWithAncestor([
@@ -10,7 +10,12 @@ export default async function Landing() {
 
   return (
     <section className='section flex-col items-center pb-4 pt-[12rem] mobile:pt-20'>
-      <Carousel literatureArticle={latestLiteratureArticle} moviesArticle={latestMoviesArticle} />
+      <Carousel
+        // @ts-ignore
+        literatureArticle={latestLiteratureArticle}
+        // @ts-ignore
+        moviesArticle={latestMoviesArticle}
+      />
       <Link
         href='/#recommended'
         className='flex flex-col items-center justify-center pt-4'

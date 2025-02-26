@@ -1,4 +1,5 @@
 import MediumArticleCard from '@/components/cards/medium-article-card';
+import MarkdownRenderer from '@/components/markdown/markdown-renderer';
 import ArticleList from '@/components/misc/article-list';
 import BackButton from '@/components/misc/back-button';
 import PhotoWithBlur from '@/components/misc/photo-with-blur';
@@ -31,7 +32,7 @@ export default function ({ article }: { article: Article }) {
               paddingRight={12}
               borderRadius={16}
             >
-              <RoundedTextBorder className='text-pretty w-[450px] text-center text-3xl font-semibold text-black mobile:w-[80vw] mobile:text-xl'>
+              <RoundedTextBorder className='w-[450px] text-pretty text-center text-3xl font-semibold text-black mobile:w-[80vw] mobile:text-xl'>
                 {article.title}
               </RoundedTextBorder>
               <IncludeBorder>
@@ -64,19 +65,21 @@ export default function ({ article }: { article: Article }) {
               {index !== array.length - 1 ? ' / ' : ''}
             </Link>
           ))}
-        <article
-          className='py-12 mobile:pt-4'
-          dangerouslySetInnerHTML={{
-            __html: (article.content as any)?.content ?? ''
-          }}
-        />
+        <article className='py-12 mobile:pt-4'>
+          <MarkdownRenderer>
+            {(article.content as any)?.content ?? ''}
+          </MarkdownRenderer>
+        </article>
       </section>
+      {/*@ts-ignore*/}
       {article.siblings.length > 0 && (
         <section className='relative mx-[8rem] flex flex-col pt-10 mobile:mx-0'>
           <SmallTitle className='mb-8 px-8 text-left text-4xl font-bold italic laptop:px-5 laptop:text-3xl'>
+            {/*@ts-ignore*/}
             Alte articole din {article.parent?.title}
           </SmallTitle>
           <ArticleList className='!h-[32rem] mobile:!h-[20rem]'>
+            {/*@ts-ignore*/}
             {article.siblings.map((sibling, index) => (
               <MediumArticleCard
                 article={sibling}
@@ -87,12 +90,14 @@ export default function ({ article }: { article: Article }) {
           </ArticleList>
         </section>
       )}
+      {/*@ts-ignore*/}
       {article.authorOtherArticles.length > 0 && (
         <section className='relative mx-[8rem] flex flex-col mobile:mx-0 mobile:pt-0'>
           <SmallTitle className='mb-8 px-8 text-left text-4xl font-bold italic laptop:px-5 laptop:text-3xl'>
             Alte articole scrise de {article.author}
           </SmallTitle>
           <ArticleList className='!h-[32rem] mobile:!h-[20rem]'>
+            {/*@ts-ignore*/}
             {article.authorOtherArticles.map((sibling, index) => (
               <MediumArticleCard
                 article={sibling}

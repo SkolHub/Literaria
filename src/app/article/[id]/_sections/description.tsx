@@ -1,4 +1,5 @@
 import NextSectionCard from '@/components/cards/next-section-card';
+import MarkdownRenderer from '@/components/markdown/markdown-renderer';
 import PhotoWithBlur from '@/components/misc/photo-with-blur';
 import MainTitle from '@/components/typography/main-title';
 import { Article } from '@/lib/types';
@@ -14,12 +15,11 @@ export default function ({ article }: { article: Article }) {
         <MainTitle className='mb-28 text-left mobile:mb-8'>
           {article.title}
         </MainTitle>
-        <div
-          className='pr-[10rem] text-lg mobile:pr-0'
-          dangerouslySetInnerHTML={{
-            __html: (article.content as any).content
-          }}
-        />
+        <article className='pr-[10rem] text-lg mobile:pr-0'>
+          <MarkdownRenderer>
+            {(article.content as any)?.content ?? ''}
+          </MarkdownRenderer>
+        </article>
       </div>
       <div className='h-100% flex min-w-[30%] max-w-[30%] flex-col gap-10 tablet:gap-6 mobile:max-w-none mobile:flex-row mobile:gap-3'>
         <PhotoWithBlur
