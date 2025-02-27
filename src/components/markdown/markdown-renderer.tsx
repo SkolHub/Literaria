@@ -10,7 +10,7 @@ export default function MarkdownRenderer({ children }: { children: string }) {
         p: Paragraph
       }}
     >
-      {children.replaceAll('\n', '\n\n')}
+      {children.replaceAll('\n', '\n\n').replaceAll('\t', '')}
     </Markdown>
   );
 }

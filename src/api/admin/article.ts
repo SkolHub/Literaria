@@ -1,11 +1,14 @@
 'use server';
 
+import { isAdmin } from '@/api/admin/auth';
 import { db } from '@/db/db';
-import { eq } from 'drizzle-orm';
-import { articles } from '@/db/schema/articles';
 import { articleContents } from '@/db/schema/article-contents';
+import { articles } from '@/db/schema/articles';
+import { eq } from 'drizzle-orm';
 
 export async function getAllSidebarArticles() {
+  await isAdmin();
+
   return db
     .select({
       id: articles.id,
@@ -25,6 +28,8 @@ export interface CreateArticleDto {
 }
 
 export async function createArticle(props: CreateArticleDto) {
+  await isAdmin();
+
   const id = (
     await db
       .insert(articles)
@@ -106,6 +111,8 @@ export async function updateArticle(
   id: number,
   props: Partial<CreateArticleDto>
 ) {
+  await isAdmin();
+
   await db
     .update(articles)
     .set({
