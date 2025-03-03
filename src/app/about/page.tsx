@@ -1,9 +1,10 @@
 import React from 'react';
 import MainTitle from '@/components/typography/main-title';
 import SmallTitle from '@/components/typography/small-title';
+import { getArticlesStats } from '@/api/article';
 
 export default async function () {
-  const [articlesCount, photosCount] = await Promise.all([2, 2]);
+  const counts = await getArticlesStats();
 
   return (
     <div className='flex min-h-[calc(100dvh-4rem)] flex-col px-8 pt-[5rem]'>
@@ -93,22 +94,28 @@ export default async function () {
         <SmallTitle className='py-4'>Statistici</SmallTitle>
         <div className='flex items-center justify-around pt-8 mobile:flex-col mobile:gap-12'>
           <div className='flex flex-col items-center justify-center'>
-            <p className='py-1 text-4xl font-semibold'>{2}</p>
+            <p className='py-1 text-4xl font-semibold'>
+              {counts.articlesCount}
+            </p>
             <p>articole</p>
           </div>
           <div className='h-[80px] w-0.5 bg-black mobile:hidden'></div>
           <div className='flex flex-col items-center justify-center'>
-            <p className='py-1 text-4xl font-semibold'>{2}</p>
+            <p className='py-1 text-4xl font-semibold'>{counts.authorsCount}</p>
             <p>autori articole</p>
           </div>
           <div className='h-[80px] w-0.5 bg-black mobile:hidden'></div>
           <div className='flex flex-col items-center justify-center'>
-            <p className='py-1 text-4xl font-semibold'>{photosCount || 0}</p>
+            <p className='py-1 text-4xl font-semibold'>
+              {counts.picturesCount || 0}
+            </p>
             <p>desene si picturi</p>
           </div>
           <div className='h-[80px] w-0.5 bg-black mobile:hidden'></div>
           <div className='flex flex-col items-center justify-center'>
-            <p className='py-1 text-4xl font-semibold'>{2}</p>
+            <p className='py-1 text-4xl font-semibold'>
+              {counts.movieReviewsCount}
+            </p>
             <p>recenzii de film</p>
           </div>
         </div>

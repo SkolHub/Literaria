@@ -2,6 +2,8 @@
 
 import { createDrafts } from '@/api/admin/draft';
 import UploadArticles from '@/components/forms/upload-articles';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function () {
@@ -16,6 +18,9 @@ export default function () {
           router.refresh();
         }}
       />
+      <Link className='w-full' href='/admin/article/draft/create'>
+        <Button className='w-full'>Creează un draft</Button>
+      </Link>
     </div>
   );
 }

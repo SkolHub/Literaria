@@ -3,8 +3,19 @@
 import { db } from '@/db/db';
 import { articles } from '@/db/schema/articles';
 import { highlightArticles } from '@/db/schema/highlight-articles';
-import { and, desc, eq, isNull, ne, sql } from 'drizzle-orm';
+import { getStorage, listAll, ref } from '@firebase/storage';
+import {
+  and,
+  count,
+  countDistinct,
+  desc,
+  eq,
+  isNull,
+  ne,
+  sql
+} from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
+import { initFirebaseApp } from '../../firebase.config';
 
 export async function getArticleByID(id: number) {
   // First get the main article to get the author
@@ -246,14 +257,40 @@ export async function getArticleNames() {
 }
 
 export async function getArticlesStats() {
-  const parent = alias(articles, 'parent');
+  const storage = getStorage(initFirebaseApp());
+  const imagesRef = ref(storage, 'gallery');
 
-  return db
-    .select({
-      title: articles.title,
-      id: articles.id,
-      parentTitle: parent.title
+  const picturesCount = await listAll(imagesRef)
+    .then((res) => {
+      return res.items.length || 0;
     })
-    .from(articles)
-    .leftJoin(parent, eq(parent.id, articles.parentID));
+    .catch((error) => {
+      console.error('Error listing files', error);
+    });
+
+  const [articlesCount, authorsCount, movieReviewsCount] = await Promise.all([
+    db
+      .select({
+        count: count()
+      })
+      .from(articles),
+    db
+      .select({
+        count: countDistinct(articles.author)
+      })
+      .from(articles),
+    db
+      .select({
+        count: count()
+      })
+      .from(articles)
+      .where(eq(articles.parentID, 9))
+  ]);
+
+  return {
+    articlesCount: articlesCount[0].count,
+    authorsCount: authorsCount[0].count,
+    movieReviewsCount: movieReviewsCount[0].count,
+    picturesCount
+  };
 }

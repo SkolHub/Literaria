@@ -3,14 +3,24 @@ import { wordToMd } from '@/lib/utils/word-to-md';
 export default function ({
   onUpload
 }: {
-  onUpload: (articles: string[]) => void;
+  onUpload: (
+    articles: {
+      content: string;
+      title: string;
+    }[]
+  ) => void;
 }) {
   async function handleArticlesUpload(e: any) {
-    const articles = Array.from(e.target.files).map((file: any) =>
-      wordToMd(file)
+    const articles = await Promise.all(
+      Array.from(e.target.files).map((file: any) => wordToMd(file))
     );
 
-    onUpload(await Promise.all(articles));
+    onUpload(
+      articles.map((el, index) => ({
+        content: el,
+        title: e.target.files[index].name.replace(/.[Dd][Oo][Cc][Xx]?/g, '')
+      }))
+    );
   }
 
   return (

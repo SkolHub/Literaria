@@ -1,6 +1,6 @@
 import { isLogged } from '@/api/admin/auth';
 import { getArticleNames, getCategories } from '@/api/article';
-import Navbar from '@/components/layout/navbar/navbar';
+import NavbarWrapper from '@/components/layout/navbar/navbar-wrapper';
 import '@/lib/fontawesome/css/fa.css';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -35,7 +35,7 @@ export default async function RootLayout({
   return (
     <html lang='en'>
       <body className={`${plusJakartaSans.className} antialiased`}>
-        <Navbar
+        <NavbarWrapper
           isAdmin={isAdmin}
           categories={categories}
           articleNames={articles}

@@ -5,15 +5,24 @@ import { db } from '@/db/db';
 import { articleContents, articles, drafts } from '@db/*';
 import { eq } from 'drizzle-orm';
 
-export async function createDrafts(articles: string[]) {
+export async function createDrafts(
+  articles: {
+    content: string;
+    title: string;
+    author?: string;
+    image?: string;
+    parentID?: number;
+  }[]
+) {
   await isAdmin();
 
   await db.insert(drafts).values(
     articles.map((el) => ({
-      title: '',
-      author: '',
-      image: '',
-      content: el
+      title: el.title,
+      author: el.author ?? '',
+      image: el.image ?? '',
+      content: el.content,
+      parentID: el.parentID
     }))
   );
 }

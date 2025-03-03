@@ -23,7 +23,7 @@ export default async function ({ children }: { children: ReactNode }) {
           <Link href='/admin/article/draft'>
             <Button className='w-full' size='sm' variant='outline'>
               <Upload className='h-4 w-4' />
-              Încarcă articole
+              Încarcă drafturi
             </Button>
           </Link>
         </div>

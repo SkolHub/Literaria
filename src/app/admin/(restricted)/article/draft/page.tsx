@@ -9,8 +9,9 @@ export default async function () {
     <main className='flex grow flex-col items-center overflow-auto px-12 pb-20 pt-20'>
       <DraftForm />
       <div className='flex w-full max-w-[800px] flex-col gap-2 pt-4'>
-        {drafts.map((draft) => (
+        {drafts.map((draft, index) => (
           <Link
+            key={index}
             href={`/admin/article/draft/${draft.id}`}
             className='rounded-md border border-black px-2 py-2'
           >
