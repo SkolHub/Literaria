@@ -1,11 +1,13 @@
-import Latest from '@/app/_sections/Latest';
-import Recommended from '@/app/_sections/Recommended';
-import Landing from '@/app/_sections/Landing';
+import Landing from '@/app/_sections/landing';
+import Latest from '@/app/_sections/latest';
+import Recommended from '@/app/_sections/recommended';
 
-export default () => (
-	<>
-		<Landing />
-		<Recommended />
-		<Latest />
-	</>
-);
+export default function () {
+  return (
+    <>
+      <Landing />
+      <Recommended />
+      <Latest />
+    </>
+  );
+}
