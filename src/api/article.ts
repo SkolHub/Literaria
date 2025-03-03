@@ -105,7 +105,8 @@ export async function getLatestArticles() {
       id: articles.id,
       title: articles.title,
       image: articles.image,
-      author: articles.author
+      author: articles.author,
+      createdAt: articles.createdAt
     })
     .from(articles)
     .limit(10)
@@ -118,7 +119,8 @@ export async function getHighlightedArticles() {
       id: articles.id,
       title: articles.title,
       image: articles.image,
-      author: articles.author
+      author: articles.author,
+      createdAt: articles.createdAt
     })
     .from(highlightArticles)
     .innerJoin(articles, eq(highlightArticles.articleID, articles.id));

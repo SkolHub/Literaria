@@ -1,0 +1,1 @@
+ALTER TABLE "drafts" ADD COLUMN "content" text NOT NULL;

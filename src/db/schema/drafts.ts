@@ -5,5 +5,6 @@ export const drafts = pgTable('drafts', {
   title: text('title').notNull(),
   author: text('author').notNull(),
   image: text('image').notNull(),
+  content: text('content').notNull(),
   parentID: integer('parent_id')
 });
