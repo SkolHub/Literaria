@@ -28,6 +28,8 @@ export default async function ({
 }) {
   const { id } = await params;
 
+  return <>{id}</>;
+
   const article = (await getArticleByID(+id)) as unknown as ArticleModel;
 
   if (article.children.length === 0) {
