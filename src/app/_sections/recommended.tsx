@@ -4,23 +4,9 @@ import SmallArticleCard from '@/components/cards/small-article-card';
 import SpotlightCardMobile from '@/components/cards/spotlight-card-mobile';
 import MainTitle from '@/components/typography/main-title';
 import Link from 'next/link';
-import { Vibrant } from 'node-vibrant/node';
 
 export default async function () {
   const articles = await getHighlightedArticles();
-  let color1: string = '#5b5a36';
-  let color2: string = '#5b5a36';
-
-  if (articles[0].image) {
-    try {
-      const palette = await Vibrant.from(articles[0].image).getPalette();
-
-      color1 = palette.Muted?.hex ?? '#5b5a36';
-      color2 = palette.DarkVibrant?.hex ?? '#5b5a36';
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   return (
     <section
@@ -45,16 +31,14 @@ export default async function () {
           <SpotlightCardMobile
             className='w-0 grow'
             article={articles[1]}
-            style={{
-              backgroundColor: color1
-            }}
+            image={articles[0].image}
+            swatch='Muted'
           />
           <SpotlightCardMobile
             className='w-0 grow'
             article={articles[2]}
-            style={{
-              backgroundColor: color2
-            }}
+            image={articles[0].image}
+            swatch='DarkVibrant'
           />
         </div>
       </div>

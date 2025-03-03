@@ -1,25 +1,53 @@
+'use client';
+
 import TitleLabel from '@/components/typography/title-label';
 import { dateFormatter } from '@/lib/formatters/date-formatter';
 import { ArticlePreview } from '@/lib/types';
 import Link from 'next/link';
-import { CSSProperties } from 'react';
+import { Vibrant } from 'node-vibrant/browser';
+import { CSSProperties, useEffect, useState } from 'react';
 
 export default function ({
   article,
+  image,
+  swatch = 'Muted',
   className = '',
   style
 }: {
   article: ArticlePreview;
+  image: string;
+  swatch?: 'Muted' | 'DarkVibrant';
   className?: string;
   style?: CSSProperties;
 }) {
   const { title, createdAt, author } = article;
+  const [color, setColor] = useState<string>('#ffffff');
+
+  useEffect(() => {
+    if (image) {
+      Vibrant.from(image)
+        .getPalette()
+        .then((palette) => {
+          if (palette[swatch]?.hex === '#ffffff') {
+            setColor('#5b5a36');
+          } else {
+            setColor(palette[swatch]?.hex ?? '#5b5a36');
+          }
+        })
+        .catch((error) => {
+          setColor('#5b5a36');
+        });
+    }
+  }, [image]);
 
   return (
     <Link
       href={`/article/${article.id}`}
-      className={`flex flex-col justify-between gap-5 rounded-[2rem] bg-[#5b5a36] p-5 ${className}`}
-      style={style}
+      className={`flex flex-col justify-between gap-5 rounded-[2rem] p-5 ${className}`}
+      style={{
+        ...style,
+        backgroundColor: color
+      }}
     >
       <h1 className='line-clamp-2 text-ellipsis font-semibold text-white'>
         {title}

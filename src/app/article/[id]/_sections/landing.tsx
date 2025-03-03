@@ -7,25 +7,9 @@ import MainTitle from '@/components/typography/main-title';
 import { articleCountFormatter } from '@/lib/formatters/article-count-formatter';
 import { Article } from '@/lib/types';
 import Link from 'next/link';
-import { Vibrant } from 'node-vibrant/node';
 import BackButton from '@/components/misc/back-button';
 
 export default async function ({ article }: { article: Article }) {
-  let color: string = '#5b5a36';
-
-  if (article.children[article.children.length - 1].image) {
-    try {
-      color = await Vibrant.from(
-        article.children[article.children.length - 1].image
-      )
-        .getPalette()
-        .then((palette) => palette.Muted?.hex ?? '#5b5a36');
-      console.log(color);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   return (
     <section className='section gap-12 px-8 pb-10 pt-32 tablet:gap-7 mobile:flex-col mobile:gap-3 mobile:px-4 mobile:pt-[5rem]'>
       <BackButton />
@@ -43,9 +27,7 @@ export default async function ({ article }: { article: Article }) {
             <SpotlightCardMobile
               className='hidden w-1/2 mobile:flex'
               article={article.children[article.children.length - 2]}
-              style={{
-                backgroundColor: color
-              }}
+              image={article.children[article.children.length - 1].image}
             />
           )}
           <NextSectionCardMobile
@@ -65,9 +47,7 @@ export default async function ({ article }: { article: Article }) {
             <SpotlightCard
               className={`grow`}
               article={article.children[article.children.length - 2]}
-              style={{
-                backgroundColor: color
-              }}
+              image={article.children[article.children.length - 1].image}
             />
           </Link>
         )}
