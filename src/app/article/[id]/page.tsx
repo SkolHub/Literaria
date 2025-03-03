@@ -13,10 +13,10 @@ export async function generateMetadata({
 }) {
   const { id } = await params;
 
-  const article = (await getArticleByID(+id)) as unknown as ArticleModel;
+  // const article = (await getArticleByID(+id)) as unknown as ArticleModel;
 
   return {
-    title: article.title + ' | Literaria',
+    title: `${id}` + ' | Literaria',
     description: 'Literaria'
   };
 }

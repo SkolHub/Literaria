@@ -35,11 +35,11 @@ export default async function RootLayout({
   return (
     <html lang='en'>
       <body className={`${plusJakartaSans.className} antialiased`}>
-        <NavbarWrapper
-          isAdmin={isAdmin}
-          categories={categories}
-          articleNames={articles}
-        />
+        {/*<NavbarWrapper*/}
+        {/*  isAdmin={isAdmin}*/}
+        {/*  categories={categories}*/}
+        {/*  articleNames={articles}*/}
+        {/*/>*/}
         <main
           id='main'
           className='h-[100svh] overflow-y-auto overflow-x-hidden'

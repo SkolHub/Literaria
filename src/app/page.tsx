@@ -5,8 +5,8 @@ export default function () {
   return (
     <>
       {/*<Landing />*/}
-      <Recommended />
-      <Latest />
+      {/*<Recommended />*/}
+      {/*<Latest />*/}
     </>
   );
 }
