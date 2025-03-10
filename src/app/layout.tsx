@@ -8,6 +8,7 @@ import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
 import { ReactNode } from 'react';
 import './globals.css';
+import Script from 'next/script';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin']
@@ -34,6 +35,21 @@ export default async function RootLayout({
 
   return (
     <html lang='en'>
+      <head>
+        <Script
+          async
+          src='https://www.googletagmanager.com/gtag/js?id=G-41RQK3JR9R'
+        ></Script>
+        <Script id='google-analytics'>
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+    
+            gtag('config', 'G-41RQK3JR9R');
+          `}
+        </Script>
+      </head>
       <body className={`${plusJakartaSans.className} antialiased`}>
         <NavbarWrapper
           isAdmin={isAdmin}
