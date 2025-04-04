@@ -16,7 +16,7 @@ export default async function () {
             className='rounded-md border border-black px-2 py-2'
           >
             <label className='text-xl'>
-              {draft.id} | {draft.title ? draft.title : <i>No title</i>}
+              {draft.title ? draft.title : <i>No title</i>}
             </label>
           </Link>
         ))}

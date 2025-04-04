@@ -1,6 +1,6 @@
 'use client';
 
-import { getGalleryPhotos } from '@/api/gallery';
+import { createImage, getGalleryPhotos } from '@/api/gallery';
 import Photos from '@/components/misc/photos';
 import MainTitle from '@/components/typography/main-title';
 import { Button } from '@/components/ui/button';
@@ -30,10 +30,11 @@ export default function () {
   const [isNewCategoryModalOpen, setIsNewCategoryModalOpen] = useState(false);
   const [isAddImageModalOpen, setIsAddImageModalOpen] = useState<string | null>(
     null
-  ); // Stores category title when modal is open
+  );
   const [newCategory, setNewCategory] = useState('');
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const [imageDescription, setImageDescription] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     getGalleryPhotos().then((res) => {
@@ -72,47 +73,30 @@ export default function () {
     setFiles(newFiles);
   };
 
-  const handleAddCategory = async () => {
-    if (newCategory.trim()) {
-      // In a real app, you'd make an API call here
-      const updatedFiles = [
-        ...(files || []),
-        { title: newCategory, images: [] }
-      ];
-      setFiles(updatedFiles);
-      setNewCategory('');
-      setIsNewCategoryModalOpen(false);
-    }
-  };
-
   const handleAddImage = async (categoryTitle: string) => {
-    if (!newImageFile || !imageDescription) return;
+    if (!newImageFile || !categoryTitle || !rawFiles?.length) return;
 
-    // In a real app, you'd upload the image to your storage here
-    const mockImageUpload = {
-      url: URL.createObjectURL(newImageFile),
-      metadata: {
-        customMetadata: {
-          title: categoryTitle,
-          description: imageDescription
-        }
-      }
-    };
+    setIsUploading(true);
 
-    const updatedFiles = files?.map((group) => {
-      if (group.title === categoryTitle) {
-        return {
-          ...group,
-          images: [...group.images, mockImageUpload as unknown as Image]
-        };
-      }
-      return group;
+    await createImage({
+      file: newImageFile,
+      filesLen: rawFiles.length,
+      title: categoryTitle,
+      description: imageDescription
     });
 
-    setFiles(updatedFiles || null);
+    getGalleryPhotos().then((res) => {
+      if (res) {
+        setRawFiles(res);
+        groupFiles(res);
+      }
+    });
+
     setNewImageFile(null);
     setImageDescription('');
     setIsAddImageModalOpen(null);
+    setIsNewCategoryModalOpen(false);
+    setIsUploading(false);
   };
 
   if (!files) {
@@ -145,19 +129,34 @@ export default function () {
           <DialogTrigger asChild>
             <Button variant='outline'>
               <Plus className='mr-2 h-4 w-4' />
-              Add Category
+              Adaugă o imagine cu o nouă categorie
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Category</DialogTitle>
+              <DialogTitle>Adaugă imaginea cu o nouă categorie</DialogTitle>
             </DialogHeader>
             <Input
-              placeholder='Category name'
+              placeholder='Categorie'
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
             />
-            <Button onClick={handleAddCategory}>Add Category</Button>
+            <Input
+              type='file'
+              accept='image/*'
+              onChange={(e) => setNewImageFile(e.target.files?.[0] || null)}
+            />
+            <Textarea
+              placeholder='Descriere imagine'
+              value={imageDescription}
+              onChange={(e) => setImageDescription(e.target.value)}
+            />
+            <Button
+              onClick={() => handleAddImage(newCategory)}
+              disabled={isUploading}
+            >
+              {isUploading ? 'Se încarcă...' : 'Adaugă imaginea'}
+            </Button>
           </DialogContent>
         </Dialog>
       </div>
@@ -177,12 +176,12 @@ export default function () {
               <DialogTrigger asChild>
                 <Button variant='outline' size='sm' className='h-8'>
                   <Upload className='mr-2 h-4 w-4' />
-                  Add Image
+                  Adaugă imagine
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Add Image to {group.title}</DialogTitle>
+                  <DialogTitle>Adaugă imaginea la {group.title}</DialogTitle>
                 </DialogHeader>
                 <Input
                   type='file'
@@ -190,17 +189,31 @@ export default function () {
                   onChange={(e) => setNewImageFile(e.target.files?.[0] || null)}
                 />
                 <Textarea
-                  placeholder='Image description'
+                  placeholder='Descriere imagine'
                   value={imageDescription}
                   onChange={(e) => setImageDescription(e.target.value)}
                 />
-                <Button onClick={() => handleAddImage(group.title)}>
-                  Add Image
+                <Button
+                  onClick={() => handleAddImage(group.title)}
+                  disabled={isUploading}
+                >
+                  {isUploading ? 'Se încarcă...' : 'Adaugă imaginea'}
                 </Button>
               </DialogContent>
             </Dialog>
           </div>
-          <Photos photos={group.images} />
+          <Photos
+            photos={group.images}
+            showDelete
+            onDelete={() => {
+              getGalleryPhotos().then((res) => {
+                if (res) {
+                  setRawFiles(res);
+                  groupFiles(res);
+                }
+              });
+            }}
+          />
         </div>
       ))}
     </div>

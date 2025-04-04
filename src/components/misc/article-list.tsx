@@ -68,13 +68,13 @@ export default ({
       {articleCount > 2 && (
         <>
           <NextItemButton
-            className='swiper-button-next absolute left-8 top-1/2 z-[1] -translate-y-1/2 rotate-180'
+            className='swiper-button-next absolute left-10 top-1/2 z-[1] -translate-y-1/2 rotate-180'
             onClick={() => {
               ref.current!.swiper.slidePrev();
             }}
           />
           <NextItemButton
-            className='swiper-button-next absolute right-8 top-1/2 z-[1] -translate-y-1/2'
+            className='swiper-button-next absolute right-10 top-1/2 z-[1] -translate-y-1/2'
             onClick={() => {
               ref.current!.swiper.slideNext();
             }}

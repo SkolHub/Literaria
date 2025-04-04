@@ -79,6 +79,12 @@ export async function updateDraft(id: number, updateDraftDto: UpdateDraftDto) {
     .where(eq(drafts.id, id));
 }
 
+export async function deleteDraft(id: number) {
+  await isAdmin();
+
+  await db.delete(drafts).where(eq(drafts.id, id));
+}
+
 export async function saveAndPublishDraft(
   id: number,
   updateDraftDto: UpdateDraftDto

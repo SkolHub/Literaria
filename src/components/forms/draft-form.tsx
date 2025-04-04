@@ -1,17 +1,40 @@
 'use client';
 
-import { saveAndPublishDraft, updateDraft } from '@/api/admin/draft';
+import {
+  deleteDraft,
+  saveAndPublishDraft,
+  updateDraft
+} from '@/api/admin/draft';
 import UploadImage from '@/components/forms/upload-image';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
+import { deleteObject, getStorage, ref } from '@firebase/storage';
+import { initializeApp } from 'firebase/app';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { Trash, Trash2 } from 'lucide-react';
 
 const MDEditor = dynamic(() => import('../markdown/markdown-editor'), {
   ssr: false
 });
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyDgN1nyrsXvq_l_F0vF35lgkML8Px_9GgY',
+  authDomain: 'literaria-info.firebaseapp.com',
+  projectId: 'literaria-info',
+  storageBucket: 'literaria-info.appspot.com',
+  messagingSenderId: '541888972404',
+  appId: '1:541888972404:web:4a4cce30aad74972ba3321',
+  measurementId: 'G-41RQK3JR9R'
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const firebaseStorage = getStorage(
+  firebaseApp,
+  'gs://literaria-info.appspot.com'
+);
 
 export default function (props: {
   title?: string;
@@ -47,6 +70,22 @@ export default function (props: {
 
   const [status, setStatus] = useState('idle');
   const [status2, setStatus2] = useState('idle');
+  const [status3, setStatus3] = useState('idle');
+
+  async function deleteImage(imageUrl: string) {
+    try {
+      const imageRef = ref(firebaseStorage, imageUrl);
+
+      await deleteObject(imageRef);
+
+      setImage('');
+
+      return true;
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      return false;
+    }
+  }
 
   return (
     <div className='flex w-full max-w-[800px] flex-col gap-4'>
@@ -94,7 +133,9 @@ export default function (props: {
         <Button
           variant='outline'
           className='grow basis-0'
-          disabled={status !== 'idle' || status2 !== 'idle'}
+          disabled={
+            status !== 'idle' || status2 !== 'idle' || status3 !== 'idle'
+          }
           onClick={async () => {
             setStatus('saving');
 
@@ -113,9 +154,11 @@ export default function (props: {
         </Button>
         <Button
           className='grow basis-0'
-          disabled={status !== 'idle' || status2 !== 'idle'}
+          disabled={
+            status !== 'idle' || status2 !== 'idle' || status3 !== 'idle'
+          }
           onClick={async () => {
-            setStatus('saving');
+            setStatus2('saving');
 
             const articleID = await saveAndPublishDraft(props.id!, {
               content: markdown,
@@ -130,9 +173,27 @@ export default function (props: {
             setStatus2('idle');
           }}
         >
-          {status2 === 'idle' ? 'publică' : 'Se publică...'}
+          {status2 === 'idle' ? 'Publică' : 'Se publică...'}
         </Button>
       </div>
+      <Button
+        variant='outline'
+        className='mt-4 text-red-500'
+        disabled={status !== 'idle' || status2 !== 'idle' || status3 !== 'idle'}
+        onClick={async () => {
+          setStatus3('saving');
+
+          await deleteDraft(props.id!);
+          await deleteImage(image);
+
+          router.push(`/admin/article/draft`);
+
+          setStatus3('idle');
+        }}
+      >
+        <Trash2 />
+        {status3 === 'idle' ? 'Șterge' : 'Se șterge...'}
+      </Button>
     </div>
   );
 }

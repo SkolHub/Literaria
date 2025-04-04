@@ -78,7 +78,11 @@ export default function ({ article }: { article: Article }) {
             {/*@ts-ignore*/}
             Alte articole din {article.parent?.title}
           </SmallTitle>
-          <ArticleList className='!h-[32rem] mobile:!h-[20rem]'>
+          <ArticleList
+            className='!h-[32rem] mobile:!h-[20rem]'
+            // @ts-ignore
+            articleCount={article.siblings.length}
+          >
             {/*@ts-ignore*/}
             {article.siblings.map((sibling, index) => (
               <MediumArticleCard
@@ -96,7 +100,11 @@ export default function ({ article }: { article: Article }) {
           <SmallTitle className='mb-8 px-8 text-left text-4xl font-bold italic laptop:px-5 laptop:text-3xl'>
             Alte articole scrise de {article.author}
           </SmallTitle>
-          <ArticleList className='!h-[32rem] mobile:!h-[20rem]'>
+          <ArticleList
+            className='!h-[32rem] mobile:!h-[20rem]'
+            // @ts-ignore
+            articleCount={article.authorOtherArticles.length}
+          >
             {/*@ts-ignore*/}
             {article.authorOtherArticles.map((sibling, index) => (
               <MediumArticleCard

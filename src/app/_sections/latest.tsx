@@ -11,7 +11,7 @@ export default async function () {
       <MainTitle className='mb-8 pl-8 text-left laptop:pl-5'>
         Ultimele articole
       </MainTitle>
-      <ArticleList className='pb-8 mobile:pb-4'>
+      <ArticleList className='pb-8 mobile:pb-4' articleCount={articles.length}>
         {articles.map((article, index) => (
           <MediumArticleCard article={article as any} key={index} />
         ))}

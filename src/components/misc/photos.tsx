@@ -8,7 +8,15 @@ import Captions from 'yet-another-react-lightbox/plugins/captions';
 import 'yet-another-react-lightbox/plugins/captions.css';
 import 'yet-another-react-lightbox/styles.css';
 
-export default ({ photos }: { photos: ImageType[] }) => {
+export default ({
+  photos,
+  showDelete = false,
+  onDelete
+}: {
+  photos: ImageType[];
+  showDelete?: boolean;
+  onDelete?: () => void;
+}) => {
   const [index, setIndex] = useState(-1);
   const [images, setImages] = useState<
     { src: string; description?: string; title?: string }[]
@@ -29,7 +37,13 @@ export default ({ photos }: { photos: ImageType[] }) => {
       <div className='max-sm:justify-center flex flex-wrap gap-3 pb-10'>
         {photos?.map((item, index) => (
           <div className={'flex flex-col'} key={index}>
-            <ImageCard image={item} onClick={setIndex} index={index} />
+            <ImageCard
+              image={item}
+              onClick={setIndex}
+              index={index}
+              showDelete={showDelete}
+              onDelete={onDelete}
+            />
           </div>
         ))}
       </div>
