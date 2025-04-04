@@ -2,7 +2,6 @@ import { getHighlightedArticles } from '@/api/article';
 import LargeArticleCard from '@/components/cards/large-article-card';
 import SmallArticleCard from '@/components/cards/small-article-card';
 import SpotlightCardMobile from '@/components/cards/spotlight-card-mobile';
-import MainTitle from '@/components/typography/main-title';
 import Link from 'next/link';
 
 export default async function () {
@@ -15,7 +14,7 @@ export default async function () {
       className='section flex-col pb-4 pt-20 mobile:pb-2'
       id='recommended'
     >
-      <MainTitle className='mb-8 text-center'>Articole recomandate</MainTitle>
+      <span className='mb-8 px-8 text-4xl font-bold'>Articole recomandate</span>
       <div className='box-border flex w-full grow gap-[2%] overflow-hidden px-[2%] py-0 mobile:hidden'>
         <SmallArticleCard
           className='w-[30%] min-w-[30%]'

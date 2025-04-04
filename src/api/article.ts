@@ -222,8 +222,7 @@ export async function getLatestArticleWithAncestor(ancestorIds: number[]) {
              "createdAt",
              "parentID"
       FROM article_descendants
-      ORDER BY "createdAt" DESC
-      LIMIT 1;
+      ORDER BY "createdAt" DESC LIMIT 1;
   `);
 
   // If we found a result, get the full article data with its relationships

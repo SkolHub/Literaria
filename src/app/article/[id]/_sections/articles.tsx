@@ -24,21 +24,23 @@ export default function ({ article }: { article: Article }) {
         Articole
       </MainTitle>
       <div className='flex flex-wrap gap-12 px-8 pb-10 mobile:hidden'>
-        {articles.map((article, index) =>
-          index % 4 === 0 || index % 4 === 3 ? (
-            <LargeArticleCard
-              article={article}
-              key={index}
-              className='h-[38rem] grow basis-1/2'
-            />
-          ) : (
-            <SmallArticleCard
-              article={article}
-              key={index}
-              className='h-[38rem] w-1/3'
-            />
-          )
-        )}
+        {articles
+          .reverse()
+          .map((article, index) =>
+            index % 4 === 0 || index % 4 === 3 ? (
+              <LargeArticleCard
+                article={article}
+                key={index}
+                className='h-[38rem] grow basis-1/2'
+              />
+            ) : (
+              <SmallArticleCard
+                article={article}
+                key={index}
+                className='h-[38rem] w-1/3'
+              />
+            )
+          )}
       </div>
       {/*<ArticleList className='mobile:hidden'>*/}
       {/*  {articles.map((article, index) => (*/}
@@ -46,7 +48,7 @@ export default function ({ article }: { article: Article }) {
       {/*  ))}*/}
       {/*</ArticleList>*/}
       <div className='hidden flex-col gap-4 px-4 mobile:flex'>
-        {articles.map((article, index) => (
+        {articles.reverse().map((article, index) => (
           <Link
             href={`/article/${article.id}`}
             className='flex justify-between gap-6'

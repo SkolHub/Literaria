@@ -70,7 +70,7 @@ export default function ({
           setExpanded(false);
         }}
       >
-        {isAdmin && <Link href='/admin'>Admin</Link>}
+        {isAdmin && <Link href='/admin/article/create'>Admin</Link>}
       </motion.label>
     </motion.div>
   );
