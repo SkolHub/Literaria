@@ -4,6 +4,7 @@ import { isAdmin } from '@/api/admin/auth';
 import { db } from '@/db/db';
 import { articleContents } from '@/db/schema/article-contents';
 import { articles } from '@/db/schema/articles';
+import { highlightArticles } from '@db/*';
 import { eq } from 'drizzle-orm';
 
 export async function getAllSidebarArticles() {
@@ -17,6 +18,35 @@ export async function getAllSidebarArticles() {
       author: articles.author
     })
     .from(articles);
+}
+
+export async function getAllArticlesHighlights() {
+  await isAdmin();
+
+  return db
+    .select({
+      id: articles.id,
+      title: articles.title,
+      author: articles.author,
+      image: articles.image,
+      createdAt: articles.createdAt
+    })
+    .from(articles);
+}
+
+export async function updateHighlightedArticles(ids: [number, number, number]) {
+  await isAdmin();
+
+  await Promise.all(
+    ids.map((id, index) =>
+      db
+        .update(highlightArticles)
+        .set({
+          articleID: id
+        })
+        .where(eq(highlightArticles.id, index + 1))
+    )
+  );
 }
 
 export interface CreateArticleDto {

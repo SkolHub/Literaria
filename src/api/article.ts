@@ -131,7 +131,8 @@ export async function getHighlightedArticles() {
       title: articles.title,
       image: articles.image,
       author: articles.author,
-      createdAt: articles.createdAt
+      createdAt: articles.createdAt,
+      highlightID: highlightArticles.id
     })
     .from(highlightArticles)
     .innerJoin(articles, eq(highlightArticles.articleID, articles.id));
@@ -199,10 +200,10 @@ export async function getLatestArticleWithAncestor(ancestorIds: number[]) {
                  a.title,
                  a.image,
                  a.author,
-                 a."createdAt",
-                 a."parentID"
-          FROM "Article" a
-          WHERE a."parentID" IN (SELECT unnest(string_to_array(${ancestorIdsString}, ',')::integer[]))
+                 a.created_at,
+                 a.parent_id
+          FROM articles a
+          WHERE a.parent_id IN (SELECT unnest(string_to_array(${ancestorIdsString}, ',')::integer[]))
 
           UNION ALL
 
@@ -211,18 +212,18 @@ export async function getLatestArticleWithAncestor(ancestorIds: number[]) {
                  child.title,
                  child.image,
                  child.author,
-                 child."createdAt",
-                 child."parentID"
-          FROM "Article" child
-                   INNER JOIN article_descendants ad ON ad.id = child."parentID")
+                 child.created_at,
+                 child.parent_id
+          FROM articles child
+                   INNER JOIN article_descendants ad ON ad.id = child.parent_id)
       SELECT id,
              title,
              image,
              author,
-             "createdAt",
-             "parentID"
+             created_at,
+             parent_id
       FROM article_descendants
-      ORDER BY "createdAt" DESC LIMIT 1;
+      ORDER BY created_at DESC LIMIT 1;
   `);
 
   // If we found a result, get the full article data with its relationships
@@ -250,6 +251,7 @@ export async function getArticleNames() {
     .select({
       title: articles.title,
       id: articles.id,
+      createdAt: articles.createdAt,
       parentTitle: parent.title
     })
     .from(articles)
@@ -293,4 +295,21 @@ export async function getArticlesStats() {
     movieReviewsCount: movieReviewsCount[0].count,
     picturesCount
   };
+}
+
+export async function getArticleIDs() {
+  const result = await db.query.articles.findMany({
+    columns: {
+      id: true
+    },
+    with: {
+      children: {
+        columns: {
+          id: true
+        }
+      }
+    }
+  });
+
+  return result.map((article) => article.id);
 }

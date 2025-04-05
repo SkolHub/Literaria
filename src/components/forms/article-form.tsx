@@ -81,7 +81,7 @@ export default function ArticleForm(props: {
             label: 'Categorie (fără părinte)'
           }
         ]}
-        placeholder='Selectează un autor...'
+        placeholder='Selectează un articol părinte...'
         selected={parentID}
         onChange={(value) => {
           setParentID(value as string);

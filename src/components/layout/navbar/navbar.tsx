@@ -105,7 +105,12 @@ export default function ({
                 : [
                     {
                       url: '/admin/article/create',
-                      title: 'Dashboard',
+                      title: 'Articole',
+                      children: []
+                    },
+                    {
+                      url: '/admin/recommended',
+                      title: 'Articole recomandate',
                       children: []
                     },
                     {

@@ -12,6 +12,7 @@ export interface ArticleModel {
   title: string;
   id: number;
   parentTitle: string | null | undefined;
+  createdAt: Date;
 }
 
 export interface Article {

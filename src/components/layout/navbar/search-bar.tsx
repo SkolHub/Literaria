@@ -1,7 +1,8 @@
+import { dateFormatter } from '@/lib/formatters/date-formatter';
 import { ArticleModel } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { filterAndSortStrings } from '@/lib/utils/search-scoring';
 import { motion } from 'framer-motion';
-import Fuse, { FuseResult } from 'fuse.js';
 import Link from 'next/link';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 
@@ -16,9 +17,7 @@ export default function ({
   isExtended: boolean;
   setIsExtended: Dispatch<SetStateAction<boolean>>;
 }) {
-  const [searchResults, setSearchResults] = useState<
-    FuseResult<{ id: number; title: string }>[]
-  >([]);
+  const [searchResults, setSearchResults] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   const searchBarRef = useRef<HTMLInputElement>(null);
@@ -36,12 +35,13 @@ export default function ({
   }
 
   function handleSearch(text: string) {
-    const fuse = new Fuse(articles, {
-      keys: ['title', 'parentTitle'],
-      threshold: 0.3
-    });
     setSearchTerm(text);
-    setSearchResults(fuse.search(text).slice(0, 5));
+    setSearchResults(
+      filterAndSortStrings(
+        articles.map((article) => article.title + ' || ' + article.parentTitle),
+        text
+      ).slice(0, 5)
+    );
   }
 
   return (
@@ -96,20 +96,35 @@ export default function ({
         </motion.div>
         {searchTerm.length > 0 && (
           <ul className='absolute left-0 top-14 w-full rounded-3xl border border-solid bg-white py-3'>
-            {searchResults.map((result, index) => (
-              <Link
-                href={`/article/${result.item.id}`}
-                key={index}
-                onClick={() => {
-                  setSearchTerm('');
-                  setIsExtended(false);
-                }}
-              >
-                <li className='cursor-pointer px-4 py-1 hover:bg-gray-200'>
-                  {result.item.title}
-                </li>
-              </Link>
-            ))}
+            {searchResults.map((result, index) => {
+              const article = articles.find(
+                (article) => article.title === result.split(' || ')[0]
+              ) ?? {
+                id: -1,
+                title: '',
+                parentTitle: '',
+                createdAt: new Date()
+              };
+
+              return (
+                <Link
+                  href={`/article/${article.id}`}
+                  key={index}
+                  onClick={() => {
+                    setSearchTerm('');
+                    setIsExtended(false);
+                  }}
+                >
+                  <li className='cursor-pointer px-4 py-2 hover:bg-gray-200'>
+                    <p className='font-medium leading-tight'>{article.title}</p>
+                    <p className='text-sm opacity-50'>
+                      {article.parentTitle} -{' '}
+                      {dateFormatter(new Date(article.createdAt))}
+                    </p>
+                  </li>
+                </Link>
+              );
+            })}
             {searchResults.length === 0 && (
               <li className='px-4 text-gray-500'>Niciun rezultat</li>
             )}

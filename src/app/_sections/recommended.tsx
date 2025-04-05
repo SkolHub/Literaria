@@ -8,7 +8,7 @@ import Link from 'next/link';
 export default async function () {
   let articles = await getHighlightedArticles();
 
-  articles = articles.sort((a, b) => a.id - b.id);
+  articles = articles.sort((a, b) => a.highlightID - b.highlightID);
 
   return (
     <section
