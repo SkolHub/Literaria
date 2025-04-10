@@ -48,14 +48,14 @@ export default function ({ article }: { article: Article }) {
       {/*  ))}*/}
       {/*</ArticleList>*/}
       <div className='hidden flex-col gap-4 px-4 mobile:flex'>
-        {articles.reverse().map((article, index) => (
+        {articles.map((article, index) => (
           <Link
             href={`/article/${article.id}`}
             className='flex justify-between gap-6'
             key={index}
           >
-            <div className='flex flex-col justify-between'>
-              <h1 className='line-clamp-3 text-[1.15rem] font-semibold'>
+            <div className='flex flex-col justify-between grow w-0'>
+              <h1 className='text-[1.15rem] font-semibold'>
                 {article.title}
               </h1>
               <div className='flex flex-col'>
