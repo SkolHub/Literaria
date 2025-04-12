@@ -7,6 +7,7 @@ import NavbarListExpanded from '@/components/layout/navbar/navbar-list-expanded'
 import NavbarLogo from '@/components/layout/navbar/navbar-logo';
 import SearchBar from '@/components/layout/navbar/search-bar';
 import useNavbar from '@/components/layout/navbar/use-navbar';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { ArticleModel, CategoryModel } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
@@ -29,6 +30,8 @@ export default function ({
   const [expanded, setExpanded] = useState<boolean>(false);
   const [activeCategory, setActiveCategory] = useState<number>(0);
   const [isExtended, setIsExtended] = useState<boolean>(false);
+
+  const isMobile = useIsMobile();
 
   return (
     <>
@@ -78,24 +81,26 @@ export default function ({
               articles={articleNames}
             />
           </motion.div>
-          <motion.div className='flex grow items-center justify-end gap-4'>
-            <SearchBar
-              className='!hidden w-0 grow mobile:!flex'
-              isExtended={isExtended}
-              setIsExtended={setIsExtended}
-              articles={articleNames}
-            />
-            {!isExtended && (
-              <div
-                className='hidden mobile:block'
-                onClick={() => {
-                  setExpanded(!expanded);
-                }}
-              >
-                <i className='fa fa-bars h-4 w-auto rounded-none mobile:block' />
-              </div>
-            )}
-          </motion.div>
+          {isMobile && (
+            <motion.div className='flex grow items-center justify-end gap-4'>
+              <SearchBar
+                className='!hidden w-0 grow mobile:!flex'
+                isExtended={isExtended}
+                setIsExtended={setIsExtended}
+                articles={articleNames}
+              />
+              {!isExtended && (
+                <div
+                  className='hidden mobile:block'
+                  onClick={() => {
+                    setExpanded(!expanded);
+                  }}
+                >
+                  <i className='fa fa-bars h-4 w-auto rounded-none mobile:block' />
+                </div>
+              )}
+            </motion.div>
+          )}
         </motion.div>
         {expanded && (
           <NavbarListExpanded

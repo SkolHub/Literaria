@@ -1,5 +1,6 @@
 import NavbarCategoryList from '@/components/layout/navbar/navbar-category-list';
 import { CategoryModel } from '@/lib/types';
+import { cn } from '@/lib/utils';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { Dispatch, SetStateAction, useState } from 'react';
@@ -36,7 +37,10 @@ export default function ({
     <>
       <motion.div
         layout
-        className='flex gap-16 py-8 pl-32 laptop:gap-12 laptop:pl-20 tablet:pl-12 mobile:hidden'
+        className={cn(
+          'flex gap-16 py-8 pl-32 laptop:gap-12 laptop:pl-20 tablet:pl-12 mobile:hidden',
+          categories.length > 4 && 'justify-center pl-0'
+        )}
       >
         {categories.map((category, index) => (
           <NavbarCategoryList
@@ -65,7 +69,9 @@ export default function ({
                 <Link
                   href={`/article/${category.id}`}
                   className={
-                    (category.children?.length ? 'title-label' : 'small-title') + ' flex items-center gap-3'
+                    (category.children?.length
+                      ? 'title-label'
+                      : 'small-title') + ' flex items-center gap-3'
                   }
                   onClick={() => {
                     setExpanded(false);

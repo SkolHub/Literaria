@@ -176,17 +176,3 @@ export function filterAndSortStrings(strings: string[], searchTerm: string, alia
   // Return the sorted strings
   return scoredStrings.map(item => item.string);
 }
-
-// Example usage:
-const strings = [
-  'apple',
-  'banana',
-  'grape',
-  'apricot',
-  'blueberry',
-  'blackberry'
-];
-const searchTerm = 'ap';
-const sortedStrings = filterAndSortStrings(strings, searchTerm);
-
-console.log(sortedStrings); // Output will be the strings sorted by relevance to the search term
