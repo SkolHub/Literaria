@@ -25,7 +25,7 @@ export default function ({ article }: { article: Article }) {
         </div>
         {directories.map((art, index) => (
           <Link
-            href={`/article/${art.id}`}
+            href={`/article/${art.titleID}`}
             className='group relative flex aspect-square h-[25rem] w-[25rem] flex-col justify-end overflow-hidden rounded-[3rem]'
             key={index}
           >
@@ -35,7 +35,7 @@ export default function ({ article }: { article: Article }) {
               alt={art.title}
             />
             <div className='absolute bottom-0 left-0 right-0 z-[1] flex cursor-pointer rounded-[0px_0px_3rem_3rem] bg-black/20 backdrop-blur-md'>
-              <label className='text-white cursor-pointer px-8 py-5 text-2xl font-medium group-hover:underline'>
+              <label className='cursor-pointer px-8 py-5 text-2xl font-medium text-white group-hover:underline'>
                 {art.title}
               </label>
             </div>

@@ -41,7 +41,7 @@ export default async function ({ article }: { article: Article }) {
           <Link
             className='flex min-h-[40%] tablet:grow mobile:hidden'
             href={
-              '/article/' + article.children[article.children.length - 2].id
+              '/article/' + article.children[article.children.length - 2].titleID
             }
           >
             <SpotlightCard

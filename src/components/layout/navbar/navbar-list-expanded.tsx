@@ -67,7 +67,7 @@ export default function ({
                 key={index}
               >
                 <Link
-                  href={`/article/${category.id}`}
+                  href={`/article/${category.titleID}`}
                   className={
                     (category.children?.length
                       ? 'title-label'

@@ -195,7 +195,8 @@ export async function getCategories() {
       title: child.title,
       children: child.children.filter(
         (grandChild) => grandChild.children.length
-      )
+      ),
+      titleID: child.titleID
     }))
   }));
 }

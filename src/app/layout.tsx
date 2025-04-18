@@ -53,7 +53,6 @@ export default async function RootLayout({
       <body className={`${plusJakartaSans.className} antialiased`}>
         <NavbarWrapper
           isAdmin={isAdmin}
-          // @ts-ignore
           categories={categories}
           articleNames={articles}
         />
