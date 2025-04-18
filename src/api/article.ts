@@ -323,16 +323,9 @@ export async function getArticlesStats() {
 export async function getArticleIDs() {
   const result = await db.query.articles.findMany({
     columns: {
-      id: true
-    },
-    with: {
-      children: {
-        columns: {
-          id: true
-        }
-      }
+      titleID: true
     }
   });
 
-  return result.map((article) => article.id);
+  return result.map((article) => article.titleID);
 }
