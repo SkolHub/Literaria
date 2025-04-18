@@ -2,6 +2,7 @@
 
 import { isAdmin } from '@/api/admin/auth';
 import { db } from '@/db/db';
+import { toKebabCase } from '@/lib/utils/kebab-case';
 import { articleContents, articles, drafts } from '@db/*';
 import { eq } from 'drizzle-orm';
 
@@ -100,7 +101,8 @@ export async function saveAndPublishDraft(
         title: updateDraftDto.title,
         author: updateDraftDto.author,
         image: updateDraftDto.image,
-        parentID: updateDraftDto.parentID
+        parentID: updateDraftDto.parentID,
+        titleID: toKebabCase(updateDraftDto.title)
       })
       .returning({
         id: articles.id

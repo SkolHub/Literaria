@@ -4,6 +4,7 @@ import { isAdmin } from '@/api/admin/auth';
 import { db } from '@/db/db';
 import { articleContents } from '@/db/schema/article-contents';
 import { articles } from '@/db/schema/articles';
+import { toKebabCase } from '@/lib/utils/kebab-case';
 import { highlightArticles } from '@db/*';
 import { eq } from 'drizzle-orm';
 
@@ -55,19 +56,6 @@ export interface CreateArticleDto {
   image: string;
   author: string;
   parentID: number | null;
-}
-
-function toKebabCase(title: string) {
-  return title
-    .toLowerCase()
-    .replace(/[ăâ]/g, 'a')
-    .replace(/î/g, 'i')
-    .replace(/ș/g, 's')
-    .replace(/ț/g, 't')
-    .replace(/[^a-z0-9 ]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim()
-    .replace(/ /g, '-');
 }
 
 export async function createArticle(props: CreateArticleDto) {
