@@ -108,6 +108,7 @@ export async function getArticleByTitleID(title: string) {
       .select({
         id: articles.id,
         title: articles.title,
+        titleID: articles.titleID,
         author: articles.author,
         createdAt: articles.createdAt,
         image: articles.image
