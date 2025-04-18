@@ -138,6 +138,7 @@ export async function getHighlightedArticles() {
   return db
     .select({
       id: articles.id,
+      titleID: articles.titleID,
       title: articles.title,
       image: articles.image,
       author: articles.author,
