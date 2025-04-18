@@ -3,7 +3,7 @@ import { FullMetadata } from '@firebase/storage-types';
 export interface CategoryModel {
   title: string;
   id?: number;
-  titleID: string;
+  titleID?: string;
   url?: string;
   fn?: () => Promise<void> | void;
   children?: CategoryModel[];
