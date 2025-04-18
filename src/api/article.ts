@@ -138,7 +138,8 @@ export async function getLatestArticles() {
       title: articles.title,
       image: articles.image,
       author: articles.author,
-      createdAt: articles.createdAt
+      createdAt: articles.createdAt,
+      titleID: articles.titleID
     })
     .from(articles)
     .limit(10)
