@@ -14,7 +14,7 @@ const GiantArticleCard = ({ article }: { article: Article }) => {
 
   return (
     <Link
-      href={'/article/' + article.id}
+      href={`/article/${article.titleID}`}
       className='group relative flex h-0 grow'
     >
       <PhotoWithBlur

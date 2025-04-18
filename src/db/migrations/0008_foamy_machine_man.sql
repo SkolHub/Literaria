@@ -1,0 +1,1 @@
+ALTER TABLE "articles" ALTER COLUMN "title_id" DROP DEFAULT;

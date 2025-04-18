@@ -13,11 +13,11 @@ export default function ({
   article: ArticlePreview;
   className?: string;
 }) {
-  const { author, createdAt, title, image, id } = article;
+  const { author, createdAt, title, image } = article;
 
   return (
     <Link
-      href={`/article/${id}`}
+      href={`/article/${article.titleID}`}
       className={`group flex flex-col ${className}`}
     >
       <div className='relative flex h-0 grow'>

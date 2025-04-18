@@ -15,11 +15,11 @@ const LargeArticleCard = ({
   article: ArticlePreview;
   className?: string;
 }) => {
-  const { image, title, author, createdAt, id } = article;
+  const { image, title, author, createdAt } = article;
 
   return (
     <Link
-      href={`/article/${id}`}
+      href={`/article/${article.titleID}`}
       className={cn('group relative flex h-full grow', className)}
     >
       <PhotoWithBlur

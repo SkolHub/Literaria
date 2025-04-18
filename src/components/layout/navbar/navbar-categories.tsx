@@ -30,7 +30,7 @@ export default function ({
           key={index}
         >
           <Link
-            href={`/article/${category.id}`}
+            href={`/article/${category.titleID}`}
             onClick={() => {
               setExpanded(false);
             }}

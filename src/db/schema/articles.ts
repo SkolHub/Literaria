@@ -11,6 +11,7 @@ export const articles = pgTable(
       .notNull()
       .defaultNow(),
     title: text('title').notNull(),
+    titleID: text('title_id').notNull().unique(),
     author: text('author').notNull(),
     image: text('image').notNull(),
     path: integer('path').notNull().array(),
@@ -18,7 +19,7 @@ export const articles = pgTable(
     parentID: integer('parent_id'),
     originalID: integer('original_id')
   },
-  (table) => [index().on(table.categoryID)]
+  (table) => [index().on(table.categoryID), index().on(table.titleID)]
 );
 
 export const articleRelations = relations(articles, ({ one, many }) => ({

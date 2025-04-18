@@ -50,6 +50,20 @@
       "when": 1741020960757,
       "tag": "0006_good_ben_parker",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1744903258892,
+      "tag": "0007_low_maverick",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1744985096624,
+      "tag": "0008_foamy_machine_man",
+      "breakpoints": true
     }
   ]
 }

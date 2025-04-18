@@ -6,9 +6,9 @@ import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { Plus_Jakarta_Sans } from 'next/font/google';
+import Script from 'next/script';
 import { ReactNode } from 'react';
 import './globals.css';
-import Script from 'next/script';
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin']
@@ -53,6 +53,7 @@ export default async function RootLayout({
       <body className={`${plusJakartaSans.className} antialiased`}>
         <NavbarWrapper
           isAdmin={isAdmin}
+          // @ts-ignore
           categories={categories}
           articleNames={articles}
         />

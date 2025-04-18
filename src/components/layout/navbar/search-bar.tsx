@@ -103,12 +103,13 @@ export default function ({
                 id: -1,
                 title: '',
                 parentTitle: '',
-                createdAt: new Date()
+                createdAt: new Date(),
+                titleID: ''
               };
 
               return (
                 <Link
-                  href={`/article/${article.id}`}
+                  href={`/article/${article.titleID}`}
                   key={index}
                   onClick={() => {
                     setSearchTerm('');

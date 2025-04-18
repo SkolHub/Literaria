@@ -17,16 +17,17 @@ import {
 import { alias } from 'drizzle-orm/pg-core';
 import { initFirebaseApp } from '../../firebase.config';
 
-export async function getArticleByID(id: number) {
+export async function getArticleByID(title: string) {
   // First get the main article to get the author
   const articleData = await db.query.articles.findFirst({
-    where: eq(articles.id, id),
+    where: eq(articles.titleID, title),
     columns: {
       image: true,
       title: true,
       author: true,
       createdAt: true,
       id: true,
+      titleID: true,
       parentID: true
     },
     with: {
@@ -36,7 +37,8 @@ export async function getArticleByID(id: number) {
           title: true,
           author: true,
           createdAt: true,
-          id: true
+          id: true,
+          titleID: true
         },
         with: {
           children: true
@@ -45,17 +47,19 @@ export async function getArticleByID(id: number) {
       parent: {
         columns: {
           id: true,
-          title: true
+          title: true,
+          titleID: true
         },
         with: {
           children: {
-            where: ne(articles.id, id),
+            where: ne(articles.titleID, title),
             columns: {
               image: true,
               title: true,
               author: true,
               createdAt: true,
-              id: true
+              id: true,
+              titleID: true
             }
           }
         }
@@ -72,18 +76,19 @@ export async function getArticleByID(id: number) {
   const [parentsQuery, authorArticles] = await Promise.all([
     // Get all parent IDs using a recursive CTE
     db.execute(sql`
-        WITH RECURSIVE article_hierarchy AS (SELECT ${articles.id}, ${articles.parentID}, ${articles.title}
-                                             FROM ${articles}
-                                             WHERE ${articles.id} = ${id}
+        WITH RECURSIVE article_hierarchy
+                           AS (SELECT ${articles.id}, ${articles.parentID}, ${articles.title}, ${articles.titleID}
+                               FROM ${articles}
+                               WHERE ${articles.titleID} = ${title}
 
-                                             UNION ALL
+                               UNION ALL
 
-                                             SELECT a.id, a.parent_id, a.title
-                                             FROM ${articles} a
-                                                      INNER JOIN article_hierarchy ah ON a.id = ah.parent_id)
-        SELECT id, title
+                               SELECT a.id, a.parent_id, a.title, a.title_id
+                               FROM ${articles} a
+                                        INNER JOIN article_hierarchy ah ON a.id = ah.parent_id)
+        SELECT id, title, title_id
         FROM article_hierarchy
-        WHERE id != ${id}
+        WHERE title_id != ${title}
         ORDER BY id DESC;
     `),
 
@@ -97,7 +102,12 @@ export async function getArticleByID(id: number) {
         image: articles.image
       })
       .from(articles)
-      .where(and(eq(articles.author, articleData.author), ne(articles.id, id)))
+      .where(
+        and(
+          eq(articles.author, articleData.author),
+          ne(articles.titleID, title)
+        )
+      )
       .orderBy(desc(articles.createdAt))
       .limit(10)
   ]);
@@ -143,25 +153,29 @@ export async function getCategories() {
     where: isNull(articles.parentID),
     columns: {
       title: true,
-      id: true
+      id: true,
+      titleID: true
     },
     with: {
       children: {
         columns: {
           title: true,
-          id: true
+          id: true,
+          titleID: true
         },
         with: {
           children: {
             columns: {
               title: true,
-              id: true
+              id: true,
+              titleID: true
             },
             with: {
               children: {
                 columns: {
                   title: true,
-                  id: true
+                  id: true,
+                  titleID: true
                 }
               }
             }
@@ -174,6 +188,7 @@ export async function getCategories() {
   return result.map((parent) => ({
     id: parent.id,
     title: parent.title,
+    titleID: parent.titleID,
     children: parent.children.map((child) => ({
       id: child.id,
       title: child.title,
@@ -201,7 +216,8 @@ export async function getLatestArticleWithAncestor(ancestorIds: number[]) {
                  a.image,
                  a.author,
                  a.created_at,
-                 a.parent_id
+                 a.parent_id,
+                 a.title_id
           FROM articles a
           WHERE a.parent_id IN (SELECT unnest(string_to_array(${ancestorIdsString}, ',')::integer[]))
 
@@ -213,7 +229,8 @@ export async function getLatestArticleWithAncestor(ancestorIds: number[]) {
                  child.image,
                  child.author,
                  child.created_at,
-                 child.parent_id
+                 child.parent_id,
+                 child.title_id
           FROM articles child
                    INNER JOIN article_descendants ad ON ad.id = child.parent_id)
       SELECT id,
@@ -221,9 +238,11 @@ export async function getLatestArticleWithAncestor(ancestorIds: number[]) {
              image,
              author,
              created_at,
-             parent_id
+             parent_id,
+             title_id
       FROM article_descendants
-      ORDER BY created_at DESC LIMIT 1;
+      ORDER BY created_at DESC
+      LIMIT 1;
   `);
 
   // If we found a result, get the full article data with its relationships
@@ -236,7 +255,8 @@ export async function getLatestArticleWithAncestor(ancestorIds: number[]) {
         title: true,
         author: true,
         createdAt: true,
-        id: true
+        id: true,
+        titleID: true
       }
     });
   }
@@ -251,6 +271,7 @@ export async function getArticleNames() {
     .select({
       title: articles.title,
       id: articles.id,
+      titleID: articles.titleID,
       createdAt: articles.createdAt,
       parentTitle: parent.title
     })

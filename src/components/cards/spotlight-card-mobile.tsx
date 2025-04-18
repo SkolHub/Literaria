@@ -34,7 +34,7 @@ export default function ({
             setColor(palette[swatch]?.hex ?? '#5b5a36');
           }
         })
-        .catch((error) => {
+        .catch(() => {
           setColor('#5b5a36');
         });
     }
@@ -42,7 +42,7 @@ export default function ({
 
   return (
     <Link
-      href={`/article/${article.id}`}
+      href={`/article/${article.titleID}`}
       className={`flex flex-col justify-between gap-5 rounded-[2rem] p-5 ${className}`}
       style={{
         ...style,

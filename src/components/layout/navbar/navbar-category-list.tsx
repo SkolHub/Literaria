@@ -26,7 +26,7 @@ export default function ({
         animate={opacity1}
       >
         <Link
-          href={category.url ?? `/article/${category.id}`}
+          href={category.url ?? `/article/${category.titleID}`}
           onClick={async () => {
             setExpanded(false);
 
@@ -56,7 +56,7 @@ export default function ({
             }}
           >
             <Link
-              href={directory.url ?? `/article/${directory.id}`}
+              href={directory.url ?? `/article/${directory.titleID}`}
               onClick={async () => {
                 setExpanded(false);
 

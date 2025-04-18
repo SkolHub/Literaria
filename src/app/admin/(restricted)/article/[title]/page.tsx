@@ -7,14 +7,14 @@ export default async function ({
   params
 }: {
   params: Promise<{
-    id: string;
+    title: string;
   }>;
 }) {
   const articles = await getAllSidebarArticles();
 
-  const { id } = await params;
+  const { title } = await params;
 
-  const article = await getArticleByID(+id);
+  const article = await getArticleByID(title);
 
   if (!article) {
     return (

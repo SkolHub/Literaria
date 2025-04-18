@@ -83,7 +83,7 @@ export default function ({
                 <div className='flex flex-col'>
                   {category.children?.map((child, index) => (
                     <Link
-                      href={`/article/${child.id}`}
+                      href={`/article/${child.titleID}`}
                       onClick={() => {
                         setExpanded(false);
                       }}

@@ -57,6 +57,19 @@ export interface CreateArticleDto {
   parentID: number | null;
 }
 
+function toKebabCase(title: string) {
+  return title
+    .toLowerCase()
+    .replace(/[ăâ]/g, 'a')
+    .replace(/î/g, 'i')
+    .replace(/ș/g, 's')
+    .replace(/ț/g, 't')
+    .replace(/[^a-z0-9 ]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/ /g, '-');
+}
+
 export async function createArticle(props: CreateArticleDto) {
   await isAdmin();
 
@@ -67,19 +80,21 @@ export async function createArticle(props: CreateArticleDto) {
         title: props.title,
         image: props.image,
         author: props.author,
-        parentID: props.parentID
+        parentID: props.parentID,
+        titleID: toKebabCase(props.title)
       })
       .returning({
-        id: articles.id
+        id: articles.id,
+        titleID: articles.titleID
       })
-  )[0].id;
+  )[0];
 
   await db.insert(articleContents).values({
-    articleID: id,
+    articleID: id.id,
     content: props.content
   });
 
-  return id;
+  return id.titleID;
 
   // let article;
   //
@@ -149,7 +164,8 @@ export async function updateArticle(
       title: props.title,
       image: props.image,
       author: props.author,
-      parentID: props.parentID
+      parentID: props.parentID,
+      titleID: props.title ? toKebabCase(props.title) : undefined
     })
     .where(eq(articles.id, id));
 

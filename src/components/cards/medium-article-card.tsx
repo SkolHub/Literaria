@@ -16,11 +16,11 @@ const MediumArticleCard = ({
   className?: string;
   titleClassName?: string;
 }) => {
-  const { author, title, image, createdAt, id } = article;
+  const { author, title, image, createdAt } = article;
 
   return (
     <Link
-      href={`/article/${id}`}
+      href={`/article/${article.titleID}`}
       className={cn('group flex h-full max-w-min flex-col', className)}
     >
       <div className='relative h-full w-[40rem] overflow-hidden laptop:w-[30rem] mobile:w-[90vw]'>
