@@ -17,7 +17,18 @@ import {
 import { alias } from 'drizzle-orm/pg-core';
 import { initFirebaseApp } from '../../firebase.config';
 
-export async function getArticleByID(title: string) {
+export async function getTitleIDByLegacyID(id: number) {
+  return (
+    await db
+      .select({
+        titleID: articles.titleID
+      })
+      .from(articles)
+      .where(eq(articles.originalID, id))
+  )[0].titleID;
+}
+
+export async function getArticleByTitleID(title: string) {
   // First get the main article to get the author
   const articleData = await db.query.articles.findFirst({
     where: eq(articles.titleID, title),

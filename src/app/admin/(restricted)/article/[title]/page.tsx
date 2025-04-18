@@ -1,5 +1,5 @@
 import { getAllSidebarArticles } from '@/api/admin/article';
-import { getArticleByID } from '@/api/article';
+import { getArticleByTitleID } from '@/api/article';
 import ArticleForm from '@/components/forms/article-form';
 import SmallTitle from '@/components/typography/small-title';
 
@@ -14,7 +14,7 @@ export default async function ({
 
   const { title } = await params;
 
-  const article = await getArticleByID(title);
+  const article = await getArticleByTitleID(title);
 
   if (!article) {
     return (
