@@ -7,6 +7,14 @@ const nextConfig: NextConfig = {
         hostname: 'firebasestorage.googleapis.com'
       }
     ]
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/sitemap-new.xml',
+        destination: '/sitemap.xml'
+      }
+    ];
   }
 };
 

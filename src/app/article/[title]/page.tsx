@@ -5,8 +5,7 @@ import Description from '@/app/article/[title]/_sections/description';
 import Directories from '@/app/article/[title]/_sections/directories';
 import Landing from '@/app/article/[title]/_sections/landing';
 import { Article as ArticleModel } from '@/lib/types';
-import NotFound from 'next/dist/client/components/not-found-error';
-import { permanentRedirect } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 
 export async function generateMetadata({
   params
@@ -32,13 +31,16 @@ export default async function ({
 
   if (title.match(/^[0-9]+$/)) {
     const titleID = await getTitleIDByLegacyID(+title);
+    if (!titleID) {
+      notFound();
+    }
     permanentRedirect(`/article/${titleID}`);
   }
 
   const article = (await getArticleByTitleID(title)) as unknown as ArticleModel;
 
   if (!article) {
-    return <NotFound />;
+    notFound();
   }
 
   if (article.children.length === 0) {

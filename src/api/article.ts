@@ -18,14 +18,20 @@ import { alias } from 'drizzle-orm/pg-core';
 import { initFirebaseApp } from '../../firebase.config';
 
 export async function getTitleIDByLegacyID(id: number) {
-  return (
+  const result = (
     await db
       .select({
         titleID: articles.titleID
       })
       .from(articles)
       .where(eq(articles.originalID, id))
-  )[0].titleID;
+  )[0];
+
+  if (!result) {
+    return null;
+  }
+
+  return result.titleID;
 }
 
 export async function getArticleByTitleID(title: string) {

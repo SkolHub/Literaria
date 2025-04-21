@@ -60,7 +60,7 @@ function SliderArticle({
     <Link
       href={
         '/article/' +
-        (currentSlide === 0 ? literatureArticle.id : moviesArticle.id)
+        (currentSlide === 0 ? literatureArticle.titleID : moviesArticle.titleID)
       }
       className='group absolute left-[4.4rem] top-[11rem] flex flex-col items-start gap-6 px-3 py-1 mobile:left-[1.5rem] mobile:top-[6.5rem] mobile:gap-5'
     >
