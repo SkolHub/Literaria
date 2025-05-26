@@ -16,7 +16,8 @@ export async function getAllSidebarArticles() {
       id: articles.id,
       parentID: articles.parentID,
       title: articles.title,
-      author: articles.author
+      author: articles.author,
+      titleID: articles.titleID
     })
     .from(articles);
 }

@@ -16,7 +16,10 @@ export default function ({ article }: { article: Article }) {
   return (
     <>
       <section className='px-[9rem] pt-32 mobile:px-4 mobile:pt-20'>
-        <BackButton className='pb-4' />
+        <BackButton
+          className='pb-4'
+          path={article.parent?.titleID ? `/article/${article.parent.titleID}` : '/'}
+        />
         <div className='relative mb-4'>
           <PhotoWithBlur
             className='h-[70vh] w-full rounded-[3rem] mobile:h-[50vh]'

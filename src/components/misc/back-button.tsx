@@ -3,7 +3,13 @@
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
-export default function BackButton({ className }: { className?: string }) {
+export default function BackButton({
+  path,
+  className
+}: {
+  path?: string;
+  className?: string;
+}) {
   const router = useRouter();
 
   return (
@@ -18,9 +24,13 @@ export default function BackButton({ className }: { className?: string }) {
         className='text-lg hover:underline'
         onClick={() => {
           if (window.history?.length && window.history.length > 1) {
-            router.back();
+            if (path) {
+              router.push(path);
+            } else {
+              router.back();
+            }
           } else {
-            router.replace('/');
+            router.push(path ?? '/');
           }
         }}
       >

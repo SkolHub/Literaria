@@ -26,6 +26,8 @@ export interface Article {
   image: string;
   content: string;
   children: Article[];
+  parentID: number | null;
+  parent: Article;
 }
 
 export interface ArticlePreview {

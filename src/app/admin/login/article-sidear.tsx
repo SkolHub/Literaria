@@ -9,6 +9,7 @@ import { useState } from 'react';
 interface SidebarArticle {
   id: number;
   title: string;
+  titleID: string;
   children?: SidebarArticle[];
 }
 
@@ -28,7 +29,7 @@ export function TreeNode({
     if (hasChildren) {
       setIsExpanded(!isExpanded);
     } else {
-      router.push(`/admin/article/${node.id}`);
+      router.push(`/admin/article/${node.titleID}`);
     }
   }
 
@@ -60,7 +61,7 @@ export function TreeNode({
             <span className='line-clamp-2 text-sm'>{node.title}</span>
           </div>
           {hover && hasChildren && (
-            <Link href={`/admin/article/${node.id}`}>
+            <Link href={`/admin/article/${node.titleID}`}>
               <Edit className='max-h-4 min-h-4 min-w-4 max-w-4 text-gray-500' />
             </Link>
           )}

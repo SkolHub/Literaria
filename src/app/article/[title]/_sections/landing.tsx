@@ -3,16 +3,18 @@ import NextSectionCard from '@/components/cards/next-section-card';
 import NextSectionCardMobile from '@/components/cards/next-section-card-mobile';
 import SpotlightCard from '@/components/cards/spotlight-card';
 import SpotlightCardMobile from '@/components/cards/spotlight-card-mobile';
+import BackButton from '@/components/misc/back-button';
 import MainTitle from '@/components/typography/main-title';
 import { articleCountFormatter } from '@/lib/formatters/article-count-formatter';
 import { Article } from '@/lib/types';
 import Link from 'next/link';
-import BackButton from '@/components/misc/back-button';
 
 export default async function ({ article }: { article: Article }) {
   return (
     <section className='section gap-12 px-8 pb-10 pt-32 tablet:gap-7 mobile:flex-col mobile:gap-3 mobile:px-4 mobile:pt-[5rem]'>
-      <BackButton />
+      <BackButton
+        path={article.parent?.titleID ? `/article/${article.parent.titleID}` : '/'}
+      />
       <div className='flex grow flex-col'>
         <MainTitle className='mb-8 text-left tablet:mb-6'>
           {article.title}
@@ -41,7 +43,8 @@ export default async function ({ article }: { article: Article }) {
           <Link
             className='flex min-h-[40%] tablet:grow mobile:hidden'
             href={
-              '/article/' + article.children[article.children.length - 2].titleID
+              '/article/' +
+              article.children[article.children.length - 2].titleID
             }
           >
             <SpotlightCard
