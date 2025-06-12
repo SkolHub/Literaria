@@ -50,14 +50,12 @@ export default function ({ article }: { article: Article }) {
       <div className='hidden flex-col gap-4 px-4 mobile:flex'>
         {articles.map((article, index) => (
           <Link
-            href={`/article/${article.id}`}
+            href={`/article/${article.titleID}`}
             className='flex justify-between gap-6'
             key={index}
           >
-            <div className='flex flex-col justify-between grow w-0'>
-              <h1 className='text-[1.15rem] font-semibold'>
-                {article.title}
-              </h1>
+            <div className='flex w-0 grow flex-col justify-between'>
+              <h1 className='text-[1.15rem] font-semibold'>{article.title}</h1>
               <div className='flex flex-col'>
                 <label className='text-[.9rem] font-medium'>
                   {article.author}
