@@ -57,7 +57,7 @@ export default function ({ article }: { article: Article }) {
           .reverse()
           .map((parent: any, index: any, array: any) => (
             <Link
-              href={`/article/${parent.id}`}
+              href={`/article/${parent.title_id}`}
               key={index}
               className={cn(
                 'mb-16 text-lg font-medium mobile:text-base',
