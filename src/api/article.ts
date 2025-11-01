@@ -6,6 +6,7 @@ import { highlightArticles } from '@/db/schema/highlight-articles';
 import { getStorage, listAll, ref } from '@firebase/storage';
 import {
   and,
+  asc,
   count,
   countDistinct,
   desc,
@@ -93,20 +94,20 @@ export async function getArticleByTitleID(title: string) {
   const [parentsQuery, authorArticles] = await Promise.all([
     // Get all parent IDs using a recursive CTE
     db.execute(sql`
-        WITH RECURSIVE article_hierarchy
-                           AS (SELECT ${articles.id}, ${articles.parentID}, ${articles.title}, ${articles.titleID}
-                               FROM ${articles}
-                               WHERE ${articles.titleID} = ${title}
+      WITH RECURSIVE article_hierarchy
+                       AS (SELECT ${articles.id}, ${articles.parentID}, ${articles.title}, ${articles.titleID}
+                           FROM ${articles}
+                           WHERE ${articles.titleID} = ${title}
 
-                               UNION ALL
+                           UNION ALL
 
-                               SELECT a.id, a.parent_id, a.title, a.title_id
-                               FROM ${articles} a
-                                        INNER JOIN article_hierarchy ah ON a.id = ah.parent_id)
-        SELECT id, title, title_id
-        FROM article_hierarchy
-        WHERE title_id != ${title}
-        ORDER BY id DESC;
+                           SELECT a.id, a.parent_id, a.title, a.title_id
+                           FROM ${articles} a
+                                  INNER JOIN article_hierarchy ah ON a.id = ah.parent_id)
+      SELECT id, title, title_id
+      FROM article_hierarchy
+      WHERE title_id != ${title}
+      ORDER BY id DESC;
     `),
 
     // Get other articles by the same author
@@ -178,6 +179,7 @@ export async function getCategories() {
     },
     with: {
       children: {
+        orderBy: [asc(articles.createdAt)],
         columns: {
           title: true,
           id: true,
@@ -230,40 +232,39 @@ export async function getLatestArticleWithAncestor(ancestorIds: number[]) {
 
   // Using a recursive CTE to find all descendants of the specified ancestors
   const result = await db.execute(sql`
-      WITH RECURSIVE article_descendants AS (
-          -- Base case: start with all articles that have the specified ancestors as parents
-          SELECT a.id,
-                 a.title,
-                 a.image,
-                 a.author,
-                 a.created_at,
-                 a.parent_id,
-                 a.title_id
-          FROM articles a
-          WHERE a.parent_id IN (SELECT unnest(string_to_array(${ancestorIdsString}, ',')::integer[]))
+    WITH RECURSIVE article_descendants AS (
+      -- Base case: start with all articles that have the specified ancestors as parents
+      SELECT a.id,
+             a.title,
+             a.image,
+             a.author,
+             a.created_at,
+             a.parent_id,
+             a.title_id
+      FROM articles a
+      WHERE a.parent_id IN (SELECT unnest(string_to_array(${ancestorIdsString}, ',')::integer[]))
 
-          UNION ALL
+      UNION ALL
 
-          -- Recursive case: join with child articles
-          SELECT child.id,
-                 child.title,
-                 child.image,
-                 child.author,
-                 child.created_at,
-                 child.parent_id,
-                 child.title_id
-          FROM articles child
-                   INNER JOIN article_descendants ad ON ad.id = child.parent_id)
-      SELECT id,
-             title,
-             image,
-             author,
-             created_at,
-             parent_id,
-             title_id
-      FROM article_descendants
-      ORDER BY created_at DESC
-      LIMIT 1;
+      -- Recursive case: join with child articles
+      SELECT child.id,
+             child.title,
+             child.image,
+             child.author,
+             child.created_at,
+             child.parent_id,
+             child.title_id
+      FROM articles child
+             INNER JOIN article_descendants ad ON ad.id = child.parent_id)
+    SELECT id,
+           title,
+           image,
+           author,
+           created_at,
+           parent_id,
+           title_id
+    FROM article_descendants
+    ORDER BY created_at DESC LIMIT 1;
   `);
 
   // If we found a result, get the full article data with its relationships
