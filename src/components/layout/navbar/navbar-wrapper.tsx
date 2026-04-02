@@ -1,13 +1,7 @@
-'use client';
-
-import dynamic from 'next/dynamic';
+import Navbar from '@/components/layout/navbar/navbar';
 import { ArticleModel, CategoryModel } from '@/lib/types';
 
-const Navbar = dynamic(() => import('@/components/layout/navbar/navbar'), {
-  ssr: false
-});
-
-export default function (props: {
+export default function NavbarWrapper(props: {
   categories: CategoryModel[];
   articleNames: ArticleModel[];
   isAdmin: boolean;

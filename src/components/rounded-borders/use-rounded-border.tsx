@@ -268,12 +268,23 @@ export function useRoundedBorder({
     updatePaths();
 
     const resizeObserver = new ResizeObserver(updatePaths);
+    const mutationObserver = new MutationObserver(() => {
+      requestAnimationFrame(updatePaths);
+    });
+
     if (containerRef.current) {
       resizeObserver.observe(containerRef.current);
+      mutationObserver.observe(containerRef.current, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true
+      });
     }
 
     return () => {
       resizeObserver.disconnect();
+      mutationObserver.disconnect();
     };
   }, [updatePaths]);
 

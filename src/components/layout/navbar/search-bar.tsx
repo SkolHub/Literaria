@@ -49,7 +49,8 @@ export default function ({
       <motion.div
         layout
         className={cn(
-          'relative flex justify-end rounded-[10rem] border border-solid outline-none mobile:hidden',
+          'relative flex justify-end rounded-[10rem] border border-solid outline-none transition-colors mobile:hidden',
+          isExtended && 'bg-white',
           !isExtended && 'mobile:border-none',
           className
         )}
@@ -58,7 +59,12 @@ export default function ({
       >
         <motion.input
           placeholder='Căutați...'
-          className='rounded-[10rem] border-[none] bg-transparent outline-none'
+          className={cn(
+            'rounded-[10rem] border-[none] bg-transparent outline-none placeholder:opacity-50',
+            isExtended
+              ? 'text-black placeholder:text-black'
+              : 'text-inherit'
+          )}
           initial={{
             width: 0
           }}
@@ -81,17 +87,27 @@ export default function ({
             searchBarRef.current?.focus();
           }}
           className={cn(
-            'flex aspect-[1] h-12 w-12 cursor-pointer items-center justify-center rounded-[5rem] bg-black transition-colors duration-200',
+            'flex aspect-[1] h-12 w-12 cursor-pointer items-center justify-center rounded-[5rem] transition-colors duration-200',
             !isExtended && 'mobile:bg-white'
           )}
+          style={{
+            backgroundColor: isExtended
+              ? '#000000'
+              : 'rgb(var(--literaria-article-nav-search-bg-rgb, 0, 0, 0))'
+          }}
         >
           <motion.i
             layout
             className={cn(
-              'fa-solid text-lg text-white transition-colors duration-200',
+              'fa-solid text-lg transition-colors duration-200',
               !isExtended && 'mobile:text-black',
               searchTerm.length === 0 ? 'fa-search' : 'fa-xmark'
             )}
+            style={{
+              color: isExtended
+                ? '#ffffff'
+                : 'rgb(var(--literaria-article-nav-search-fg-rgb, 255, 255, 255))'
+            }}
           />
         </motion.div>
         {searchTerm.length > 0 && (

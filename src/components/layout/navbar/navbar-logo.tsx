@@ -11,11 +11,15 @@ export default function ({
   return (
     <Link className={className} href='/'>
       <motion.img
+        className='transition-[filter] duration-200'
         initial={{
           height: '3rem'
         }}
         animate={{
           height: navMode ? '6rem' : '3rem'
+        }}
+        style={{
+          filter: 'var(--literaria-article-nav-logo-filter, none)'
         }}
         layout='preserve-aspect'
         src='/logo.svg'

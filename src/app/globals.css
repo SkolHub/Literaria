@@ -93,5 +93,12 @@ nextjs-portal {
 @layer base {
     :root {
         --radius: 0.5rem;
+        --literaria-article-nav-rgb: 255, 255, 255;
+        --literaria-article-nav-foreground-rgb: 0, 0, 0;
+        --literaria-article-nav-logo-filter: none;
+        --literaria-article-nav-search-bg-rgb: 0, 0, 0;
+        --literaria-article-nav-search-fg-rgb: 255, 255, 255;
+        --literaria-article-nav-gradient-opacity: 0;
+        --literaria-article-nav-solid-opacity: 1;
     }
 }

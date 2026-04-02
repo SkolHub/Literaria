@@ -4,21 +4,27 @@ import { useMotionValueEvent, useScroll } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
-export default function () {
+export default function useNavbar() {
   const pathName = usePathname();
-
-  const [navMode, setNavMode] = useState<boolean>(
-    pathName === '/' && window.innerWidth > 900
-  );
+  const [navMode, setNavMode] = useState<boolean>(false);
 
   const main = useRef<any>(null);
 
   useEffect(() => {
     main.current = document.getElementById('main');
-  }, [navMode]);
+  }, []);
 
   useEffect(() => {
-    setNavMode(pathName === '/' && window.innerWidth > 900);
+    const updateNavMode = () => {
+      setNavMode(pathName === '/' && window.innerWidth > 900);
+    };
+
+    updateNavMode();
+    window.addEventListener('resize', updateNavMode);
+
+    return () => {
+      window.removeEventListener('resize', updateNavMode);
+    };
   }, [pathName]);
 
   const { scrollYProgress } = useScroll({
