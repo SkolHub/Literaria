@@ -1,6 +1,6 @@
 'use client';
 
-import { createImage, getGalleryPhotos } from '@/api/gallery';
+import { getGalleryPhotos } from '@/api/gallery';
 import Photos from '@/components/misc/photos';
 import MainTitle from '@/components/typography/main-title';
 import { Button } from '@/components/ui/button';
@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { Image } from '@/lib/types';
+import { useUploadThing } from '@/lib/uploadthing-client';
 import { Plus, Upload } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import 'yet-another-react-lightbox/styles.css';
@@ -25,7 +26,6 @@ interface ImageGroup {
 }
 
 export default function () {
-  const [rawFiles, setRawFiles] = useState<Image[]>();
   const [files, setFiles] = useState<ImageGroup[] | null>(null);
   const [isNewCategoryModalOpen, setIsNewCategoryModalOpen] = useState(false);
   const [isAddImageModalOpen, setIsAddImageModalOpen] = useState<string | null>(
@@ -34,15 +34,22 @@ export default function () {
   const [newCategory, setNewCategory] = useState('');
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const [imageDescription, setImageDescription] = useState('');
-  const [isUploading, setIsUploading] = useState(false);
+  const { startUpload, isUploading } = useUploadThing('galleryImage', {
+    onUploadError: (error) => {
+      console.error('Error uploading gallery image:', error);
+    }
+  });
+
+  async function loadGalleryPhotos() {
+    const res = await getGalleryPhotos();
+
+    if (res) {
+      groupFiles(res);
+    }
+  }
 
   useEffect(() => {
-    getGalleryPhotos().then((res) => {
-      if (res) {
-        setRawFiles(res);
-        groupFiles(res);
-      }
-    });
+    loadGalleryPhotos();
   }, []);
 
   const groupFiles = (res: Image[]) => {
@@ -74,29 +81,24 @@ export default function () {
   };
 
   const handleAddImage = async (categoryTitle: string) => {
-    if (!newImageFile || !categoryTitle) return;
+    const title = categoryTitle.trim();
 
-    setIsUploading(true);
+    if (!newImageFile || !title) {
+      return;
+    }
 
-    const formData = new FormData();
-    formData.set('file', newImageFile);
-    formData.set('title', categoryTitle);
-    formData.set('description', imageDescription);
-
-    await createImage(formData);
-
-    getGalleryPhotos().then((res) => {
-      if (res) {
-        setRawFiles(res);
-        groupFiles(res);
-      }
+    await startUpload([newImageFile], {
+      title,
+      description: imageDescription.trim()
     });
+
+    await loadGalleryPhotos();
 
     setNewImageFile(null);
     setImageDescription('');
+    setNewCategory('');
     setIsAddImageModalOpen(null);
     setIsNewCategoryModalOpen(false);
-    setIsUploading(false);
   };
 
   if (!files) {
@@ -206,12 +208,7 @@ export default function () {
             photos={group.images}
             showDelete
             onDelete={() => {
-              getGalleryPhotos().then((res) => {
-                if (res) {
-                  setRawFiles(res);
-                  groupFiles(res);
-                }
-              });
+              loadGalleryPhotos();
             }}
           />
         </div>

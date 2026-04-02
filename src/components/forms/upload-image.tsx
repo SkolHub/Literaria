@@ -1,7 +1,7 @@
 'use client';
 
-import { uploadCoverImage } from '@/api/storage';
-import { useState } from 'react';
+import { useUploadThing } from '@/lib/uploadthing-client';
+import type { ChangeEvent } from 'react';
 
 export default function UploadImage({
   image,
@@ -10,25 +10,29 @@ export default function UploadImage({
   image: string;
   setImage: (value: string) => void;
 }) {
-  const [isUploading, setIsUploading] = useState(false);
+  const { startUpload, isUploading } = useUploadThing('articleCover', {
+    onClientUploadComplete: (res) => {
+      const uploadedFile = res[0];
 
-  async function handleImageUpload(e: any) {
+      if (uploadedFile) {
+        setImage(uploadedFile.ufsUrl);
+      }
+    },
+    onUploadError: (error) => {
+      console.error('Error uploading image:', error);
+    }
+  });
+
+  async function handleImageUpload(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
 
     if (!file) {
       return;
     }
 
-    setIsUploading(true);
-
     try {
-      const formData = new FormData();
-      formData.set('file', file);
-
-      const { url } = await uploadCoverImage(formData);
-      setImage(url);
+      await startUpload([file]);
     } finally {
-      setIsUploading(false);
       e.target.value = '';
     }
   }

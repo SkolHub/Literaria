@@ -21,14 +21,12 @@ export default function PhotoWithBlur({
           className='h-full w-full scale-110 object-cover blur-2xl brightness-75'
           src={src}
           alt={alt}
-          crossOrigin='anonymous'
         />
       </div>
       <img
         className='relative h-full w-full object-contain'
         src={src}
         alt={alt}
-        crossOrigin='anonymous'
       />
     </div>
   );

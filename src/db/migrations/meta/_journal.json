@@ -64,6 +64,13 @@
       "when": 1744985096624,
       "tag": "0008_foamy_machine_man",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1775126437784,
+      "tag": "0009_sloppy_sabretooth",
+      "breakpoints": true
     }
   ]
 }

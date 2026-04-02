@@ -2,8 +2,8 @@
 
 import { db } from '@/db/db';
 import { articles } from '@/db/schema/articles';
+import { galleryImages } from '@/db/schema/gallery-images';
 import { highlightArticles } from '@/db/schema/highlight-articles';
-import { countGalleryImages } from '@/lib/storage/r2';
 import {
   and,
   asc,
@@ -301,12 +301,8 @@ export async function getArticleNames() {
 }
 
 export async function getArticlesStats() {
-  const picturesCount = await countGalleryImages().catch((error) => {
-    console.error('Error listing files', error);
-    return 0;
-  });
-
-  const [articlesCount, authorsCount, movieReviewsCount] = await Promise.all([
+  const [articlesCount, authorsCount, movieReviewsCount, picturesCount] =
+    await Promise.all([
     db
       .select({
         count: count()
@@ -322,14 +318,19 @@ export async function getArticlesStats() {
         count: count()
       })
       .from(articles)
-      .where(eq(articles.parentID, 9))
+      .where(eq(articles.parentID, 9)),
+    db
+      .select({
+        count: count()
+      })
+      .from(galleryImages)
   ]);
 
   return {
     articlesCount: articlesCount[0].count,
     authorsCount: authorsCount[0].count,
     movieReviewsCount: movieReviewsCount[0].count,
-    picturesCount
+    picturesCount: picturesCount[0].count
   };
 }
 

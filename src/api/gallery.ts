@@ -1,37 +1,25 @@
 'use server';
 
 import { isAdmin } from '@/api/admin/auth';
-import {
-  countGalleryImages,
-  listGalleryImages,
-  uploadImage
-} from '@/lib/storage/r2';
-
-export async function createImage(formData: FormData) {
-  await isAdmin();
-
-  const file = formData.get('file');
-  const title = formData.get('title');
-  const description = formData.get('description');
-
-  if (!(file instanceof File)) {
-    throw new Error('Missing gallery image file');
-  }
-
-  if (typeof title !== 'string' || title.trim() === '') {
-    throw new Error('Missing gallery image title');
-  }
-
-  await uploadImage(file, {
-    folder: 'gallery',
-    title: title.trim(),
-    description: typeof description === 'string' ? description.trim() : ''
-  });
-}
+import { db } from '@/db/db';
+import { galleryImages } from '@/db/schema/gallery-images';
+import { asc, count } from 'drizzle-orm';
 
 export async function getGalleryPhotos() {
   try {
-    return await listGalleryImages();
+    const images = await db
+      .select()
+      .from(galleryImages)
+      .orderBy(asc(galleryImages.title), asc(galleryImages.fileKey));
+
+    return images.map((image) => ({
+      key: image.fileKey,
+      url: image.url,
+      metadata: {
+        title: image.title,
+        description: image.description || undefined
+      }
+    }));
   } catch (error) {
     console.error('Error listing files', error);
     return [];
@@ -40,7 +28,13 @@ export async function getGalleryPhotos() {
 
 export async function getGalleryPhotosCount() {
   try {
-    return await countGalleryImages();
+    const result = await db
+      .select({
+        count: count()
+      })
+      .from(galleryImages);
+
+    return result[0]?.count ?? 0;
   } catch (error) {
     console.error('Error listing files', error);
     return 0;

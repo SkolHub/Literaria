@@ -2,6 +2,8 @@
 
 import { getAuth } from 'firebase-admin/auth';
 import { cookies } from 'next/headers';
+import type { NextRequest } from 'next/server';
+import { UploadThingError } from 'uploadthing/server';
 import { initAdmin } from '../../../firebase-admin.config';
 
 export async function login(token: string) {
@@ -27,6 +29,28 @@ export async function logout() {
 export async function isAdmin() {
   if (!(await isLogged())) {
     throw new Error('Unauthorized');
+  }
+}
+
+export async function isAdminRequest(req: NextRequest) {
+  const sessionCookie = req.cookies.get('session')?.value;
+
+  if (!sessionCookie) {
+    throw new UploadThingError({
+      code: 'FORBIDDEN',
+      message: 'Unauthorized'
+    });
+  }
+
+  await initAdmin();
+
+  try {
+    await getAuth().verifySessionCookie(sessionCookie, true);
+  } catch {
+    throw new UploadThingError({
+      code: 'FORBIDDEN',
+      message: 'Unauthorized'
+    });
   }
 }
 

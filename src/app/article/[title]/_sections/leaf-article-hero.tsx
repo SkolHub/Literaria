@@ -301,14 +301,12 @@ export default function LeafArticleHero({
             className='absolute inset-0 h-full w-full scale-110 object-cover blur-3xl brightness-75'
             src={image}
             alt={title}
-            crossOrigin='anonymous'
           />
           <div className='absolute inset-0 bg-black/10' />
           <img
             className='relative h-full w-full object-cover'
             src={image}
             alt={title}
-            crossOrigin='anonymous'
           />
         </motion.div>
         <motion.div
