@@ -1,4 +1,5 @@
 import { dateFormatter } from '@/lib/formatters/date-formatter';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { ArticleModel } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { filterAndSortStrings } from '@/lib/utils/search-scoring';
@@ -19,6 +20,7 @@ export default function ({
 }) {
   const [searchResults, setSearchResults] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const isMobile = useIsMobile();
 
   const searchBarRef = useRef<HTMLInputElement>(null);
   const searchBar = searchBarRef.current;
@@ -86,27 +88,27 @@ export default function ({
             setIsExtended(true);
             searchBarRef.current?.focus();
           }}
-          className={cn(
-            'flex aspect-[1] h-12 w-12 cursor-pointer items-center justify-center rounded-[5rem] transition-colors duration-200',
-            !isExtended && 'mobile:bg-white'
-          )}
+          className='flex aspect-[1] h-12 w-12 cursor-pointer items-center justify-center rounded-[5rem] transition-colors duration-200'
           style={{
             backgroundColor: isExtended
               ? '#000000'
-              : 'rgb(var(--literaria-article-nav-search-bg-rgb, 0, 0, 0))'
+              : isMobile
+                ? 'transparent'
+                : 'rgb(var(--literaria-article-nav-search-bg-rgb, 0, 0, 0))'
           }}
         >
           <motion.i
             layout
             className={cn(
               'fa-solid text-lg transition-colors duration-200',
-              !isExtended && 'mobile:text-black',
               searchTerm.length === 0 ? 'fa-search' : 'fa-xmark'
             )}
             style={{
               color: isExtended
                 ? '#ffffff'
-                : 'rgb(var(--literaria-article-nav-search-fg-rgb, 255, 255, 255))'
+                : isMobile
+                  ? 'rgb(var(--literaria-article-nav-foreground-rgb, 0, 0, 0))'
+                  : 'rgb(var(--literaria-article-nav-search-fg-rgb, 255, 255, 255))'
             }}
           />
         </motion.div>

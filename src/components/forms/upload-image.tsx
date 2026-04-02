@@ -1,26 +1,7 @@
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable
-} from '@firebase/storage';
-import { initializeApp } from 'firebase/app';
+'use client';
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyDgN1nyrsXvq_l_F0vF35lgkML8Px_9GgY',
-  authDomain: 'literaria-info.firebaseapp.com',
-  projectId: 'literaria-info',
-  storageBucket: 'literaria-info.appspot.com',
-  messagingSenderId: '541888972404',
-  appId: '1:541888972404:web:4a4cce30aad74972ba3321',
-  measurementId: 'G-41RQK3JR9R'
-};
-
-const firebaseApp = initializeApp(firebaseConfig);
-const firebaseStorage = getStorage(
-  firebaseApp,
-  'gs://literaria-info.appspot.com'
-);
+import { uploadCoverImage } from '@/api/storage';
+import { useState } from 'react';
 
 export default function UploadImage({
   image,
@@ -29,29 +10,27 @@ export default function UploadImage({
   image: string;
   setImage: (value: string) => void;
 }) {
+  const [isUploading, setIsUploading] = useState(false);
+
   async function handleImageUpload(e: any) {
-    const url: string = await new Promise((resolve, reject) => {
-      const uploadTask = uploadBytesResumable(
-        ref(firebaseStorage, `cover_${Date.now()}.jpg`),
-        e.target.files[0]
-      );
+    const file = e.target.files?.[0];
 
-      uploadTask.on(
-        'state_changed',
-        () => {},
-        () => {},
-        async () => {
-          try {
-            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-            resolve(downloadURL);
-          } catch (err) {
-            reject(err);
-          }
-        }
-      );
-    });
+    if (!file) {
+      return;
+    }
 
-    setImage(url);
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.set('file', file);
+
+      const { url } = await uploadCoverImage(formData);
+      setImage(url);
+    } finally {
+      setIsUploading(false);
+      e.target.value = '';
+    }
   }
 
   return (
@@ -61,7 +40,7 @@ export default function UploadImage({
           onClick={() => document.getElementById('image-upload')!.click()}
           className='flex h-60 cursor-pointer select-none items-center justify-center rounded-lg border-2 border-dashed border-neutral-400'
         >
-          Încărcați o imagine
+          {isUploading ? 'Se încarcă...' : 'Încărcați o imagine'}
         </div>
       ) : (
         <div className='flex justify-center'>
@@ -69,7 +48,7 @@ export default function UploadImage({
             onClick={() => document.getElementById('image-upload')!.click()}
             className='absolute left-0 top-0 flex h-full w-full cursor-pointer items-center justify-center rounded-xl bg-black/30 text-center text-white opacity-0 hover:opacity-100'
           >
-            Apasă pentru a schimba
+            {isUploading ? 'Se încarcă...' : 'Apasă pentru a schimba'}
           </label>
           <img
             src={image}
@@ -83,6 +62,7 @@ export default function UploadImage({
         type='file'
         accept='image/*'
         className='hidden'
+        disabled={isUploading}
         onChange={handleImageUpload}
       />
     </div>

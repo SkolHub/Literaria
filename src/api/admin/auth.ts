@@ -31,16 +31,18 @@ export async function isAdmin() {
 }
 
 export async function isLogged() {
-  return (await cookies()).get('session')?.value !== undefined;
+  const sessionCookie = (await cookies()).get('session')?.value;
 
-  // await initAdmin();
-  //
-  // try {
-  //   return await getAuth().verifySessionCookie(
-  //     (await cookies()).get('session')?.value!,
-  //     true
-  //   );
-  // } catch {
-  //   return null;
-  // }
+  if (!sessionCookie) {
+    return false;
+  }
+
+  await initAdmin();
+
+  try {
+    await getAuth().verifySessionCookie(sessionCookie, true);
+    return true;
+  } catch {
+    return false;
+  }
 }

@@ -124,7 +124,14 @@ export default function ({
                     setExpanded(!expanded);
                   }}
                 >
-                  <i className='fa fa-bars h-4 w-auto rounded-none mobile:block' />
+                  <i
+                    className='fa fa-bars h-4 w-auto rounded-none mobile:block'
+                    style={{
+                      color: expanded
+                        ? '#000000'
+                        : 'rgb(var(--literaria-article-nav-foreground-rgb, 0, 0, 0))'
+                    }}
+                  />
                 </div>
               )}
             </motion.div>

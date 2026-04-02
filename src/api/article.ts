@@ -3,7 +3,7 @@
 import { db } from '@/db/db';
 import { articles } from '@/db/schema/articles';
 import { highlightArticles } from '@/db/schema/highlight-articles';
-import { getStorage, listAll, ref } from '@firebase/storage';
+import { countGalleryImages } from '@/lib/storage/r2';
 import {
   and,
   asc,
@@ -16,7 +16,6 @@ import {
   sql
 } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
-import { initFirebaseApp } from '../../firebase.config';
 
 export async function getTitleIDByLegacyID(id: number) {
   const result = (
@@ -302,16 +301,10 @@ export async function getArticleNames() {
 }
 
 export async function getArticlesStats() {
-  const storage = getStorage(initFirebaseApp());
-  const imagesRef = ref(storage, 'gallery');
-
-  const picturesCount = await listAll(imagesRef)
-    .then((res) => {
-      return res.items.length || 0;
-    })
-    .catch((error) => {
-      console.error('Error listing files', error);
-    });
+  const picturesCount = await countGalleryImages().catch((error) => {
+    console.error('Error listing files', error);
+    return 0;
+  });
 
   const [articlesCount, authorsCount, movieReviewsCount] = await Promise.all([
     db

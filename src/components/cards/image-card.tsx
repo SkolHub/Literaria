@@ -1,8 +1,9 @@
+'use client';
+
 import PhotoWithBlur from '@/components/misc/photo-with-blur';
+import { deleteStorageObject } from '@/api/storage';
 import { Button } from '@/components/ui/button';
 import { Image as ImageType } from '@/lib/types';
-import { deleteObject, getStorage, ref } from '@firebase/storage';
-import { initializeApp } from 'firebase/app';
 import { Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import {
@@ -16,22 +17,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger
 } from '../ui/alert-dialog';
-
-const firebaseConfig = {
-  apiKey: 'AIzaSyDgN1nyrsXvq_l_F0vF35lgkML8Px_9GgY',
-  authDomain: 'literaria-info.firebaseapp.com',
-  projectId: 'literaria-info',
-  storageBucket: 'literaria-info.appspot.com',
-  messagingSenderId: '541888972404',
-  appId: '1:541888972404:web:4a4cce30aad74972ba3321',
-  measurementId: 'G-41RQK3JR9R'
-};
-
-const firebaseApp = initializeApp(firebaseConfig);
-const firebaseStorage = getStorage(
-  firebaseApp,
-  'gs://literaria-info.appspot.com'
-);
 
 export default function ({
   image,
@@ -48,10 +33,9 @@ export default function ({
 }) {
   const { refresh } = useRouter();
 
-  async function deleteImage(imageUrl: string) {
+  async function deleteImage(key: string) {
     try {
-      const imageRef = ref(firebaseStorage, imageUrl);
-      await deleteObject(imageRef);
+      await deleteStorageObject(key);
       return true;
     } catch (error) {
       console.error('Error deleting image:', error);
@@ -63,7 +47,7 @@ export default function ({
     <div className='relative'>
       <div className='relative aspect-square w-[300px]'>
         <PhotoWithBlur
-          src={image.src}
+          src={image.url}
           alt='poza'
           key={index}
           onClick={() => {
@@ -71,11 +55,9 @@ export default function ({
           }}
           className={'h-[300px] w-[300px] cursor-pointer rounded-3xl'}
         />
-        {!!image.metadata.customMetadata?.description && (
+        {!!image.metadata.description && (
           <div className='absolute bottom-0 left-0 box-border flex min-h-14 w-full items-center justify-start rounded-b-3xl rounded-t-lg pb-1 pl-4 backdrop-blur-[0.3rem] backdrop-brightness-[0.8]'>
-            <label className='text-sm text-white'>
-              {image.metadata.customMetadata?.description}
-            </label>
+            <label className='text-sm text-white'>{image.metadata.description}</label>
           </div>
         )}
       </div>
@@ -103,7 +85,7 @@ export default function ({
               <AlertDialogCancel>Anulează</AlertDialogCancel>
               <AlertDialogAction
                 onClick={async () => {
-                  await deleteImage(image.src);
+                  await deleteImage(image.key);
                   onDelete?.();
                   refresh();
                 }}

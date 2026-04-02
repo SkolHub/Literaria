@@ -169,8 +169,8 @@ export default function LeafArticleHero({
     scrollProgress,
     [0, 1],
     [
-      safeViewportHeight * (isMobile ? 0.58 : 0.86),
-      safeViewportHeight * (isMobile ? 0.5 : 0.7)
+      safeViewportHeight * (isMobile ? 0.74 : 0.86),
+      safeViewportHeight * (isMobile ? 0.62 : 0.7)
     ]
   );
   const heroMarginTop = useTransform(
@@ -301,12 +301,14 @@ export default function LeafArticleHero({
             className='absolute inset-0 h-full w-full scale-110 object-cover blur-3xl brightness-75'
             src={image}
             alt={title}
+            crossOrigin='anonymous'
           />
           <div className='absolute inset-0 bg-black/10' />
           <img
             className='relative h-full w-full object-cover'
             src={image}
             alt={title}
+            crossOrigin='anonymous'
           />
         </motion.div>
         <motion.div
@@ -323,7 +325,7 @@ export default function LeafArticleHero({
         </motion.div>
       </motion.div>
       <section className='px-[9rem] mobile:px-4'>
-        <BackButton className='pb-4' path={backPath} />
+        <BackButton path={backPath} />
       </section>
     </>
   );

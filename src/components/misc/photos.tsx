@@ -25,9 +25,9 @@ export default ({
   useEffect(() => {
     setImages(
       photos.map((item) => ({
-        src: item.src,
-        description: item.metadata.customMetadata?.description,
-        title: item.metadata.customMetadata?.title
+        src: item.url,
+        description: item.metadata.description,
+        title: item.metadata.title
       }))
     );
   }, [photos]);

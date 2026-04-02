@@ -48,7 +48,7 @@ export default function () {
   const groupFiles = (res: Image[]) => {
     const groupedFiles = res.reduce(
       (acc: { [title: string]: Image[] }, file) => {
-        const title = file.metadata.customMetadata?.title;
+        const title = file.metadata.title;
         if (title) {
           if (!acc[title]) {
             acc[title] = [];
@@ -74,16 +74,16 @@ export default function () {
   };
 
   const handleAddImage = async (categoryTitle: string) => {
-    if (!newImageFile || !categoryTitle || !rawFiles?.length) return;
+    if (!newImageFile || !categoryTitle) return;
 
     setIsUploading(true);
 
-    await createImage({
-      file: newImageFile,
-      filesLen: rawFiles.length,
-      title: categoryTitle,
-      description: imageDescription
-    });
+    const formData = new FormData();
+    formData.set('file', newImageFile);
+    formData.set('title', categoryTitle);
+    formData.set('description', imageDescription);
+
+    await createImage(formData);
 
     getGalleryPhotos().then((res) => {
       if (res) {

@@ -1,77 +1,48 @@
 'use server';
 
+import { isAdmin } from '@/api/admin/auth';
 import {
-  getDownloadURL,
-  getMetadata,
-  getStorage,
-  listAll,
-  ref,
-  uploadBytes
-} from '@firebase/storage';
-import { initFirebaseApp } from '../../firebase.config';
+  countGalleryImages,
+  listGalleryImages,
+  uploadImage
+} from '@/lib/storage/r2';
 
-export async function createImage({
-  file,
-  filesLen,
-  title,
-  description
-}: {
-  file: File;
-  filesLen: number;
-  title: string;
-  description: string;
-}) {
-  if (!file) {
-    return;
+export async function createImage(formData: FormData) {
+  await isAdmin();
+
+  const file = formData.get('file');
+  const title = formData.get('title');
+  const description = formData.get('description');
+
+  if (!(file instanceof File)) {
+    throw new Error('Missing gallery image file');
   }
 
-  const storage = getStorage(initFirebaseApp());
-  const imagesRef = ref(storage, 'gallery');
-  const newImageRef = ref(imagesRef, `${filesLen ? filesLen : 'hello'}.png`);
-  const metadata = {
-    contentType: 'image/png',
-    customMetadata: {
-      title: title,
-      description: description
-    }
-  };
-  await uploadBytes(newImageRef, file, metadata).then((snapshot) => {
-    console.log('Uploaded a blob or file!');
+  if (typeof title !== 'string' || title.trim() === '') {
+    throw new Error('Missing gallery image title');
+  }
+
+  await uploadImage(file, {
+    folder: 'gallery',
+    title: title.trim(),
+    description: typeof description === 'string' ? description.trim() : ''
   });
 }
 
 export async function getGalleryPhotos() {
-  const storage = getStorage(initFirebaseApp());
-  const imagesRef = ref(storage, 'gallery');
-
-  return await listAll(imagesRef)
-    .then(async (res) => {
-      const promises = res.items.map(async (item) => {
-        const metadata = await getMetadata(item);
-        const url = await getDownloadURL(item);
-        return {
-          name: item.name,
-          metadata: metadata,
-          src: url
-        };
-      });
-
-      return await Promise.all(promises);
-    })
-    .catch((error) => {
-      console.error('Error listing files', error);
-    });
+  try {
+    return await listGalleryImages();
+  } catch (error) {
+    console.error('Error listing files', error);
+    return [];
+  }
 }
 
 export async function getGalleryPhotosCount() {
-  const storage = getStorage(initFirebaseApp());
-  const imagesRef = ref(storage, 'gallery');
-
-  return await listAll(imagesRef)
-    .then((res) => {
-      return res.items.length || 0;
-    })
-    .catch((error) => {
-      console.error('Error listing files', error);
-    });
+  try {
+    return await countGalleryImages();
+  } catch (error) {
+    console.error('Error listing files', error);
+    return 0;
+  }
 }

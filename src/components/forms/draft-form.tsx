@@ -5,36 +5,19 @@ import {
   saveAndPublishDraft,
   updateDraft
 } from '@/api/admin/draft';
+import { deleteStorageObject } from '@/api/storage';
 import UploadImage from '@/components/forms/upload-image';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
-import { deleteObject, getStorage, ref } from '@firebase/storage';
-import { initializeApp } from 'firebase/app';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Trash, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
 const MDEditor = dynamic(() => import('../markdown/markdown-editor'), {
   ssr: false
 });
-
-const firebaseConfig = {
-  apiKey: 'AIzaSyDgN1nyrsXvq_l_F0vF35lgkML8Px_9GgY',
-  authDomain: 'literaria-info.firebaseapp.com',
-  projectId: 'literaria-info',
-  storageBucket: 'literaria-info.appspot.com',
-  messagingSenderId: '541888972404',
-  appId: '1:541888972404:web:4a4cce30aad74972ba3321',
-  measurementId: 'G-41RQK3JR9R'
-};
-
-const firebaseApp = initializeApp(firebaseConfig);
-const firebaseStorage = getStorage(
-  firebaseApp,
-  'gs://literaria-info.appspot.com'
-);
 
 export default function (props: {
   title?: string;
@@ -74,9 +57,11 @@ export default function (props: {
 
   async function deleteImage(imageUrl: string) {
     try {
-      const imageRef = ref(firebaseStorage, imageUrl);
+      if (!imageUrl) {
+        return true;
+      }
 
-      await deleteObject(imageRef);
+      await deleteStorageObject(imageUrl);
 
       setImage('');
 

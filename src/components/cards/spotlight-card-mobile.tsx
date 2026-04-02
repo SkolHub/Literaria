@@ -38,7 +38,7 @@ export default function ({
           setColor('#5b5a36');
         });
     }
-  }, [image]);
+  }, [image, swatch]);
 
   return (
     <Link

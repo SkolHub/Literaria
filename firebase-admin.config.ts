@@ -5,7 +5,6 @@ import { atob } from 'node:buffer';
 interface FirebaseAdminAppParams {
   projectId: string;
   clientEmail: string;
-  storageBucket: string;
   privateKey: string;
 }
 
@@ -28,8 +27,7 @@ export function createFirebaseAdminApp(params: FirebaseAdminAppParams) {
 
   return admin.initializeApp({
     credential: cert,
-    projectId: params.projectId,
-    storageBucket: params.storageBucket
+    projectId: params.projectId
   });
 }
 
@@ -39,7 +37,6 @@ export async function initAdmin() {
   const params: FirebaseAdminAppParams = {
     projectId: service_account.project_id,
     clientEmail: service_account.client_email,
-    storageBucket: service_account.storage_bucket,
     privateKey: service_account.private_key
   };
 

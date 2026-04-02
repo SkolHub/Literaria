@@ -1,5 +1,3 @@
-import { FullMetadata } from '@firebase/storage-types';
-
 export interface CategoryModel {
   title: string;
   id?: number;
@@ -39,10 +37,16 @@ export interface ArticlePreview {
   createdAt?: Date | string;
 }
 
+export interface ImageMetadata {
+  title?: string;
+  description?: string;
+  contentType?: string;
+}
+
 export interface Image {
-  name: string;
-  src: string;
-  metadata: FullMetadata;
+  key: string;
+  url: string;
+  metadata: ImageMetadata;
 }
 
 export interface CarouselCategoryModel {
