@@ -35,19 +35,31 @@ export const uploadRouter = {
       };
     })
     .onUploadComplete(async ({ file, metadata }) => {
-      await db.insert(galleryImages).values({
-        fileKey: file.key,
-        url: file.ufsUrl,
-        title: metadata.title,
-        description: metadata.description
-      });
+      try {
+        await db.insert(galleryImages).values({
+          fileKey: file.key,
+          url: file.ufsUrl,
+          title: metadata.title,
+          description: metadata.description
+        });
 
-      return {
-        fileKey: file.key,
-        url: file.ufsUrl,
-        title: metadata.title,
-        description: metadata.description
-      };
+        return {
+          fileKey: file.key,
+          url: file.ufsUrl,
+          title: metadata.title,
+          description: metadata.description
+        };
+      } catch (error) {
+        console.error('Failed to persist gallery image after UploadThing callback', {
+          fileKey: file.key,
+          url: file.ufsUrl,
+          title: metadata.title,
+          description: metadata.description,
+          error
+        });
+
+        throw error;
+      }
     })
 } satisfies FileRouter;
 

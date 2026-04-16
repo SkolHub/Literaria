@@ -10,10 +10,11 @@ import UploadImage from '@/components/forms/upload-image';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
+import { useUploadThing } from '@/lib/uploadthing-client';
+import { Trash2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Trash2 } from 'lucide-react';
 
 const MDEditor = dynamic(() => import('../markdown/markdown-editor'), {
   ssr: false
@@ -47,6 +48,7 @@ export default function (props: {
     [...new Set(props.articles.map((article) => article.author))].sort()
   );
   const [image, setImage] = useState<string>(props.imageUrl ?? '');
+  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
   const [parentID, setParentID] = useState<string>(
     props.parentID?.toString() ?? '-1'
   );
@@ -54,6 +56,11 @@ export default function (props: {
   const [status, setStatus] = useState('idle');
   const [status2, setStatus2] = useState('idle');
   const [status3, setStatus3] = useState('idle');
+  const { startUpload, isUploading } = useUploadThing('articleCover', {
+    onUploadError: (uploadError) => {
+      console.error('Error uploading draft cover:', uploadError);
+    }
+  });
 
   async function deleteImage(imageUrl: string) {
     try {
@@ -112,25 +119,73 @@ export default function (props: {
           setParentID(value as string);
         }}
       />
-      <UploadImage image={image} setImage={setImage} />
+      <UploadImage
+        image={image}
+        pendingImageFile={pendingImageFile}
+        setPendingImageFile={setPendingImageFile}
+        isUploading={isUploading}
+      />
       <MDEditor markdown={markdown} setMarkdown={setMarkdown} />
       <div className='flex gap-4'>
         <Button
           variant='outline'
           className='grow basis-0'
           disabled={
-            status !== 'idle' || status2 !== 'idle' || status3 !== 'idle'
+            status !== 'idle' ||
+            status2 !== 'idle' ||
+            status3 !== 'idle' ||
+            isUploading
           }
           onClick={async () => {
             setStatus('saving');
 
-            await updateDraft(props.id!, {
-              content: markdown,
-              author: author,
-              title: title,
-              image: image,
-              parentID: parentID === '-1' ? null : +parentID
-            });
+            const previousImage = image;
+            let nextImage = image;
+            let uploadedImageUrl: string | null = null;
+
+            try {
+              if (pendingImageFile) {
+                const uploadResult = await startUpload([pendingImageFile]);
+                const uploadedFile = uploadResult?.[0];
+
+                if (!uploadedFile?.ufsUrl) {
+                  throw new Error('Image upload failed');
+                }
+
+                uploadedImageUrl = uploadedFile.ufsUrl;
+                nextImage = uploadedFile.ufsUrl;
+              }
+
+              await updateDraft(props.id!, {
+                content: markdown,
+                author: author,
+                title: title,
+                image: nextImage,
+                parentID: parentID === '-1' ? null : +parentID
+              });
+
+              if (uploadedImageUrl) {
+                setImage(uploadedImageUrl);
+                setPendingImageFile(null);
+
+                if (previousImage && previousImage !== uploadedImageUrl) {
+                  try {
+                    await deleteStorageObject(previousImage);
+                  } catch (cleanupError) {
+                    console.error(
+                      'Error deleting replaced draft image:',
+                      cleanupError
+                    );
+                  }
+                }
+              }
+            } catch (error) {
+              console.error('Error saving draft:', error);
+
+              if (uploadedImageUrl) {
+                await deleteStorageObject(uploadedImageUrl);
+              }
+            }
 
             setStatus('idle');
           }}
@@ -140,20 +195,62 @@ export default function (props: {
         <Button
           className='grow basis-0'
           disabled={
-            status !== 'idle' || status2 !== 'idle' || status3 !== 'idle'
+            status !== 'idle' ||
+            status2 !== 'idle' ||
+            status3 !== 'idle' ||
+            isUploading
           }
           onClick={async () => {
             setStatus2('saving');
 
-            const articleID = await saveAndPublishDraft(props.id!, {
-              content: markdown,
-              author: author,
-              title: title,
-              image: image,
-              parentID: parentID === '-1' ? null : +parentID
-            });
+            const previousImage = image;
+            let nextImage = image;
+            let uploadedImageUrl: string | null = null;
 
-            router.push(`/admin/article/${articleID}`);
+            try {
+              if (pendingImageFile) {
+                const uploadResult = await startUpload([pendingImageFile]);
+                const uploadedFile = uploadResult?.[0];
+
+                if (!uploadedFile?.ufsUrl) {
+                  throw new Error('Image upload failed');
+                }
+
+                uploadedImageUrl = uploadedFile.ufsUrl;
+                nextImage = uploadedFile.ufsUrl;
+              }
+
+              const articleID = await saveAndPublishDraft(props.id!, {
+                content: markdown,
+                author: author,
+                title: title,
+                image: nextImage,
+                parentID: parentID === '-1' ? null : +parentID
+              });
+
+              if (
+                uploadedImageUrl &&
+                previousImage &&
+                previousImage !== uploadedImageUrl
+              ) {
+                try {
+                  await deleteStorageObject(previousImage);
+                } catch (cleanupError) {
+                  console.error(
+                    'Error deleting replaced draft image after publish:',
+                    cleanupError
+                  );
+                }
+              }
+
+              router.push(`/admin/article/${articleID}`);
+            } catch (error) {
+              console.error('Error publishing draft:', error);
+
+              if (uploadedImageUrl) {
+                await deleteStorageObject(uploadedImageUrl);
+              }
+            }
 
             setStatus2('idle');
           }}
@@ -164,7 +261,12 @@ export default function (props: {
       <Button
         variant='outline'
         className='mt-4 text-red-500'
-        disabled={status !== 'idle' || status2 !== 'idle' || status3 !== 'idle'}
+        disabled={
+          status !== 'idle' ||
+          status2 !== 'idle' ||
+          status3 !== 'idle' ||
+          isUploading
+        }
         onClick={async () => {
           setStatus3('saving');
 

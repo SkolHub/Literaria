@@ -18,34 +18,24 @@ import {
   PopoverTrigger
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { ScrollArea } from './scroll-area';
 
 export type ComboboxOptions = {
   value: string;
   label: string;
+  description?: string;
+  keywords?: string[];
 };
 
 type Mode = 'single' | 'multiple';
 
-function matchScore(item: string, search: string): number {
-  const itemLower = item.toLowerCase();
-  const searchLower = search.toLowerCase();
+function normalizeValue(value: string) {
+  return value.trim().toLowerCase();
+}
 
-  if (itemLower === searchLower) return 1;
-
-  const searchLen = searchLower.length;
-  let maxMatchLength = 0;
-
-  for (let i = 0; i < itemLower.length - searchLen + 1; i++) {
-    let matchLength = 0;
-    for (let j = 0; j < searchLen; j++) {
-      if (itemLower[i + j] !== searchLower[j]) break;
-      matchLength++;
-    }
-    maxMatchLength = Math.max(maxMatchLength, matchLength);
-  }
-
-  return maxMatchLength / searchLen;
+function getOptionSearchText(option: ComboboxOptions) {
+  return [option.label, option.description, option.keywords?.join(' ')]
+    .filter(Boolean)
+    .join(' ');
 }
 
 interface ComboboxProps {
@@ -54,6 +44,8 @@ interface ComboboxProps {
   selected: string | string[];
   className?: string;
   placeholder?: string;
+  searchPlaceholder?: string;
+  emptyMessage?: string;
   onChange?: (event: string | string[]) => void;
   onCreate?: (value: string) => void;
 }
@@ -63,16 +55,57 @@ export function Combobox({
   selected,
   className,
   placeholder,
+  searchPlaceholder,
+  emptyMessage,
   mode = 'single',
   onChange,
   onCreate
 }: ComboboxProps) {
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState<string>('');
+  const normalizedQuery = normalizeValue(query);
+
+  const filteredOptions = options.filter((option) => {
+    if (!normalizedQuery) {
+      return true;
+    }
+
+    return normalizeValue(getOptionSearchText(option)).includes(
+      normalizedQuery
+    );
+  });
+
+  const selectedLabels =
+    mode === 'multiple' && Array.isArray(selected)
+      ? selected
+          .map(
+            (selectedValue) =>
+              options.find((item) => item.value === selectedValue)?.label ??
+              selectedValue
+          )
+          .join(', ')
+      : typeof selected === 'string'
+        ? (options.find((item) => item.value === selected)?.label ?? selected)
+        : '';
+
+  const canCreate =
+    Boolean(onCreate) &&
+    normalizedQuery.length > 0 &&
+    !options.some(
+      (option) =>
+        normalizeValue(option.label) === normalizedQuery ||
+        normalizeValue(option.value) === normalizedQuery
+    );
+
+  React.useEffect(() => {
+    if (!open) {
+      setQuery('');
+    }
+  }, [open]);
 
   return (
     <div className={cn('block', className)}>
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={setOpen} modal>
         <PopoverTrigger asChild>
           <Button
             key={'combobox-trigger'}
@@ -80,62 +113,72 @@ export function Combobox({
             variant='outline'
             role='combobox'
             aria-expanded={open}
-            className='w-full justify-between'
+            className='h-auto min-h-11 w-full justify-between px-3 py-2'
           >
-            {selected && selected.length > 0 ? (
+            {selectedLabels.length > 0 ? (
               <div className='relative mr-auto flex flex-grow flex-wrap items-center overflow-hidden'>
-                <span>
-                  {mode === 'multiple' && Array.isArray(selected)
-                    ? selected
-                        .map(
-                          (selectedValue: string) =>
-                            options.find((item) => item.value === selectedValue)
-                              ?.label
-                        )
-                        .join(', ')
-                    : mode === 'single' &&
-                      options.find((item) => item.value === selected)?.label}
-                </span>
+                <span className='line-clamp-2 text-left'>{selectedLabels}</span>
               </div>
             ) : (
-              (placeholder ?? 'Select Item...')
+              <span className='mr-auto text-neutral-500'>
+                {placeholder ?? 'Select Item...'}
+              </span>
             )}
             <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className='w-72 max-w-sm p-0'>
-          <Command
-            filter={(value, search) => {
-              const score = matchScore(value, search);
-              return score > 0.5 ? score : 0;
-            }}
-            shouldFilter={true}
-          >
+        <PopoverContent
+          align='start'
+          className='w-[var(--radix-popover-trigger-width)] min-w-[18rem] p-0'
+        >
+          <Command shouldFilter={false}>
             <CommandInput
-              placeholder={placeholder ?? ''}
+              placeholder={searchPlaceholder ?? placeholder ?? ''}
               value={query}
               onValueChange={(value: string) => setQuery(value)}
             />
-            {onCreate && (
-              <CommandEmpty
-                onClick={() => {
-                  onCreate(query);
-                  setQuery('');
-                }}
-                className='flex cursor-pointer items-center justify-center px-2 py-1.5'
-              >
-                <label className='break-all'>Create: {query}</label>
-              </CommandEmpty>
-            )}
-            <ScrollArea>
-              <div className='max-h-80'>
-                <CommandList>
-                  <CommandGroup>
-                    {options.map((option) => (
+            <CommandList className='max-h-80 overflow-y-auto overscroll-contain'>
+              {canCreate && (
+                <CommandGroup heading='Nou'>
+                  <CommandItem
+                    value={query}
+                    onSelect={() => {
+                      const createdValue = query.trim();
+
+                      if (!createdValue || !onCreate) {
+                        return;
+                      }
+
+                      onCreate(createdValue);
+                      onChange?.(createdValue);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check className='mr-2 h-4 w-4 opacity-0' />
+                    <div className='flex flex-col'>
+                      <span className='font-medium'>
+                        Creează “{query.trim()}”
+                      </span>
+                      <span className='text-xs text-neutral-500'>
+                        Folosește această valoare nouă.
+                      </span>
+                    </div>
+                  </CommandItem>
+                </CommandGroup>
+              )}
+              {filteredOptions.length > 0 ? (
+                <CommandGroup>
+                  {filteredOptions.map((option) => {
+                    const isSelected =
+                      mode === 'multiple' && Array.isArray(selected)
+                        ? selected.includes(option.value)
+                        : selected === option.value;
+
+                    return (
                       <CommandItem
-                        key={option.label}
-                        value={option.label}
-                        onSelect={(currentValue) => {
+                        key={option.value}
+                        value={getOptionSearchText(option)}
+                        onSelect={() => {
                           if (onChange) {
                             if (
                               mode === 'multiple' &&
@@ -150,6 +193,7 @@ export function Combobox({
                               );
                             } else {
                               onChange(option.value);
+                              setOpen(false);
                             }
                           }
                         }}
@@ -157,18 +201,28 @@ export function Combobox({
                         <Check
                           className={cn(
                             'mr-2 h-4 w-4',
-                            selected === option.value
-                              ? 'opacity-100'
-                              : 'opacity-0'
+                            isSelected ? 'opacity-100' : 'opacity-0'
                           )}
                         />
-                        {option.label}
+                        <div className='flex min-w-0 flex-col'>
+                          <span className='truncate'>{option.label}</span>
+                          {option.description ? (
+                            <span className='truncate text-xs text-neutral-500'>
+                              {option.description}
+                            </span>
+                          ) : null}
+                        </div>
                       </CommandItem>
-                    ))}
-                  </CommandGroup>
-                </CommandList>
-              </div>
-            </ScrollArea>
+                    );
+                  })}
+                </CommandGroup>
+              ) : null}
+              {!canCreate && filteredOptions.length === 0 ? (
+                <CommandEmpty className='py-6 text-center text-sm text-neutral-500'>
+                  {emptyMessage ?? 'Nu am găsit nimic.'}
+                </CommandEmpty>
+              ) : null}
+            </CommandList>
           </Command>
         </PopoverContent>
       </Popover>

@@ -24,7 +24,7 @@ export default function MarkdownEditor({
     <MDXEditor
       plugins={[
         toolbarPlugin({
-          toolbarClassName: '!-top-16',
+          toolbarClassName: '!-top-10',
           toolbarContents: () => (
             <>
               <UndoRedo />

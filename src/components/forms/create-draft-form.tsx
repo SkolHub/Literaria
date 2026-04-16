@@ -1,10 +1,12 @@
 'use client';
 
 import { createDrafts } from '@/api/admin/draft';
+import { deleteStorageObject } from '@/api/storage';
 import UploadImage from '@/components/forms/upload-image';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
+import { useUploadThing } from '@/lib/uploadthing-client';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 
@@ -38,11 +40,17 @@ export default function (props: {
     [...new Set(props.articles.map((article) => article.author))].sort()
   );
   const [image, setImage] = useState<string>(props.imageUrl ?? '');
+  const [pendingImageFile, setPendingImageFile] = useState<File | null>(null);
   const [parentID, setParentID] = useState<string>(
     props.parentID?.toString() ?? '-1'
   );
 
   const [status, setStatus] = useState('idle');
+  const { startUpload, isUploading } = useUploadThing('articleCover', {
+    onUploadError: (uploadError) => {
+      console.error('Error uploading draft cover:', uploadError);
+    }
+  });
 
   return (
     <div className='flex w-full max-w-[800px] flex-col gap-4'>
@@ -84,25 +92,58 @@ export default function (props: {
           setParentID(value as string);
         }}
       />
-      <UploadImage image={image} setImage={setImage} />
+      <UploadImage
+        image={image}
+        pendingImageFile={pendingImageFile}
+        setPendingImageFile={setPendingImageFile}
+        isUploading={isUploading}
+      />
       <MDEditor markdown={markdown} setMarkdown={setMarkdown} />
       <div className='flex gap-4'>
         <Button
           variant='outline'
           className='grow basis-0'
-          disabled={status !== 'idle'}
+          disabled={status !== 'idle' || isUploading}
           onClick={async () => {
             setStatus('saving');
 
-            await createDrafts([
-              {
-                content: markdown,
-                title: title,
-                author: author,
-                parentID: parentID === '-1' ? undefined : +parentID,
-                image: image
+            let nextImage = image;
+            let uploadedImageUrl: string | null = null;
+
+            try {
+              if (pendingImageFile) {
+                const uploadResult = await startUpload([pendingImageFile]);
+                const uploadedFile = uploadResult?.[0];
+
+                if (!uploadedFile?.ufsUrl) {
+                  throw new Error('Image upload failed');
+                }
+
+                uploadedImageUrl = uploadedFile.ufsUrl;
+                nextImage = uploadedFile.ufsUrl;
               }
-            ]);
+
+              await createDrafts([
+                {
+                  content: markdown,
+                  title: title,
+                  author: author,
+                  parentID: parentID === '-1' ? undefined : +parentID,
+                  image: nextImage
+                }
+              ]);
+
+              if (uploadedImageUrl) {
+                setImage(uploadedImageUrl);
+                setPendingImageFile(null);
+              }
+            } catch (error) {
+              console.error('Error creating draft:', error);
+
+              if (uploadedImageUrl) {
+                await deleteStorageObject(uploadedImageUrl);
+              }
+            }
 
             setStatus('idle');
           }}
