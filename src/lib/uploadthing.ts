@@ -41,6 +41,13 @@ export const uploadRouter = {
         title: metadata.title,
         description: metadata.description
       });
+
+      return {
+        fileKey: file.key,
+        url: file.ufsUrl,
+        title: metadata.title,
+        description: metadata.description
+      };
     })
 } satisfies FileRouter;
 

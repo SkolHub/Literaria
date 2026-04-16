@@ -34,9 +34,11 @@ export default function () {
   const [newCategory, setNewCategory] = useState('');
   const [newImageFile, setNewImageFile] = useState<File | null>(null);
   const [imageDescription, setImageDescription] = useState('');
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const { startUpload, isUploading } = useUploadThing('galleryImage', {
     onUploadError: (error) => {
       console.error('Error uploading gallery image:', error);
+      setUploadError(error.message || 'Încărcarea imaginii a eșuat.');
     }
   });
 
@@ -80,23 +82,84 @@ export default function () {
     setFiles(newFiles);
   };
 
+  const addImageToGroups = (image: Image) => {
+    setFiles((current) => {
+      if (!current) {
+        return current;
+      }
+
+      const existingGroup = current.find(
+        (group) => group.title === image.metadata.title
+      );
+
+      if (!existingGroup) {
+        const nextGroups = [
+          ...current,
+          {
+            title: image.metadata.title || '',
+            images: [image]
+          }
+        ];
+
+        return nextGroups.sort((a, b) => {
+          if (a.title === 'Alte tablouri') return 1;
+          if (b.title === 'Alte tablouri') return -1;
+          return a.title.localeCompare(b.title);
+        });
+      }
+
+      return current.map((group) =>
+        group.title === image.metadata.title
+          ? {
+              ...group,
+              images: [...group.images, image]
+            }
+          : group
+      );
+    });
+  };
+
+  const resetUploadForm = () => {
+    setNewImageFile(null);
+    setImageDescription('');
+    setNewCategory('');
+    setUploadError(null);
+  };
+
   const handleAddImage = async (categoryTitle: string) => {
     const title = categoryTitle.trim();
 
     if (!newImageFile || !title) {
+      setUploadError('Selectează o imagine și completează categoria.');
       return;
     }
 
-    await startUpload([newImageFile], {
+    setUploadError(null);
+
+    const uploadedFiles = await startUpload([newImageFile], {
       title,
       description: imageDescription.trim()
     });
 
+    const uploadedFile = uploadedFiles?.[0];
+
+    if (!uploadedFile?.serverData) {
+      setUploadError('Încărcarea a eșuat. Imaginea nu a fost salvată.');
+      return;
+    }
+
+    addImageToGroups({
+      key: uploadedFile.serverData.fileKey,
+      url: uploadedFile.serverData.url,
+      metadata: {
+        title: uploadedFile.serverData.title,
+        description: uploadedFile.serverData.description || undefined
+      }
+    });
+
     await loadGalleryPhotos();
 
-    setNewImageFile(null);
-    setImageDescription('');
-    setNewCategory('');
+    resetUploadForm();
     setIsAddImageModalOpen(null);
     setIsNewCategoryModalOpen(false);
   };
@@ -126,7 +189,15 @@ export default function () {
         <MainTitle className='py-4'>Galerie</MainTitle>
         <Dialog
           open={isNewCategoryModalOpen}
-          onOpenChange={setIsNewCategoryModalOpen}
+          onOpenChange={(open) => {
+            setIsNewCategoryModalOpen(open);
+
+            if (!open) {
+              resetUploadForm();
+            } else {
+              setUploadError(null);
+            }
+          }}
         >
           <DialogTrigger asChild>
             <Button variant='outline'>
@@ -153,6 +224,9 @@ export default function () {
               value={imageDescription}
               onChange={(e) => setImageDescription(e.target.value)}
             />
+            {uploadError && (
+              <p className='text-sm text-red-500'>{uploadError}</p>
+            )}
             <Button
               onClick={() => handleAddImage(newCategory)}
               disabled={isUploading}
@@ -171,9 +245,15 @@ export default function () {
             </MainTitle>
             <Dialog
               open={isAddImageModalOpen === group.title}
-              onOpenChange={(open) =>
-                setIsAddImageModalOpen(open ? group.title : null)
-              }
+              onOpenChange={(open) => {
+                setIsAddImageModalOpen(open ? group.title : null);
+
+                if (!open) {
+                  resetUploadForm();
+                } else {
+                  setUploadError(null);
+                }
+              }}
             >
               <DialogTrigger asChild>
                 <Button variant='outline' size='sm' className='h-8'>
@@ -195,6 +275,9 @@ export default function () {
                   value={imageDescription}
                   onChange={(e) => setImageDescription(e.target.value)}
                 />
+                {uploadError && (
+                  <p className='text-sm text-red-500'>{uploadError}</p>
+                )}
                 <Button
                   onClick={() => handleAddImage(group.title)}
                   disabled={isUploading}
