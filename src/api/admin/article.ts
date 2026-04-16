@@ -6,7 +6,7 @@ import { articleContents } from '@/db/schema/article-contents';
 import { articles } from '@/db/schema/articles';
 import { toKebabCase } from '@/lib/utils/kebab-case';
 import { highlightArticles } from '@db/*';
-import { eq } from 'drizzle-orm';
+import { and, eq, ne } from 'drizzle-orm';
 
 export async function getAllSidebarArticles() {
   await isAdmin();
@@ -59,8 +59,68 @@ export interface CreateArticleDto {
   parentID: number | null;
 }
 
+async function getParentTitleID(parentID: number | null) {
+  if (parentID === null) {
+    return null;
+  }
+
+  const parentArticle = await db.query.articles.findFirst({
+    where: eq(articles.id, parentID),
+    columns: {
+      titleID: true
+    }
+  });
+
+  return parentArticle?.titleID ?? null;
+}
+
+async function titleIDExists(titleID: string, excludedArticleID?: number) {
+  const article = await db.query.articles.findFirst({
+    where:
+      typeof excludedArticleID === 'number'
+        ? and(eq(articles.titleID, titleID), ne(articles.id, excludedArticleID))
+        : eq(articles.titleID, titleID),
+    columns: {
+      id: true
+    }
+  });
+
+  return Boolean(article);
+}
+
+async function resolveTitleID(
+  title: string,
+  parentID: number | null,
+  excludedArticleID?: number
+) {
+  const baseTitleID = toKebabCase(title);
+
+  if (!(await titleIDExists(baseTitleID, excludedArticleID))) {
+    return baseTitleID;
+  }
+
+  const parentTitleID = await getParentTitleID(parentID);
+  const scopedTitleID = parentTitleID
+    ? `${baseTitleID}-${parentTitleID}`
+    : baseTitleID;
+
+  if (!(await titleIDExists(scopedTitleID, excludedArticleID))) {
+    return scopedTitleID;
+  }
+
+  let suffix = 2;
+
+  while (await titleIDExists(`${scopedTitleID}-${suffix}`, excludedArticleID)) {
+    suffix += 1;
+  }
+
+  return `${scopedTitleID}-${suffix}`;
+}
+
 export async function createArticle(props: CreateArticleDto) {
   await isAdmin();
+
+  const titleID = await resolveTitleID(props.title, props.parentID);
 
   const id = (
     await db
@@ -70,7 +130,7 @@ export async function createArticle(props: CreateArticleDto) {
         image: props.image,
         author: props.author,
         parentID: props.parentID,
-        titleID: toKebabCase(props.title)
+        titleID
       })
       .returning({
         id: articles.id,
@@ -147,6 +207,29 @@ export async function updateArticle(
 ) {
   await isAdmin();
 
+  const existingArticle = await db.query.articles.findFirst({
+    where: eq(articles.id, id),
+    columns: {
+      title: true,
+      parentID: true
+    }
+  });
+
+  if (!existingArticle) {
+    throw new Error('Article not found');
+  }
+
+  const nextTitle = props.title ?? existingArticle.title;
+  const nextParentID =
+    typeof props.parentID === 'undefined'
+      ? existingArticle.parentID
+      : props.parentID;
+  const shouldRecalculateTitleID =
+    typeof props.title !== 'undefined' || typeof props.parentID !== 'undefined';
+  const titleID = shouldRecalculateTitleID
+    ? await resolveTitleID(nextTitle, nextParentID, id)
+    : undefined;
+
   await db
     .update(articles)
     .set({
@@ -154,7 +237,7 @@ export async function updateArticle(
       image: props.image,
       author: props.author,
       parentID: props.parentID,
-      titleID: props.title ? toKebabCase(props.title) : undefined
+      titleID
     })
     .where(eq(articles.id, id));
 
