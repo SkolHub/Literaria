@@ -84,7 +84,7 @@ export default function ArticleTreeSidebar({
   articles: SidebarArticle[];
 }) {
   return (
-    <div className='flex h-full w-64 flex-col overflow-y-auto bg-white py-4 pr-4'>
+    <div className='flex h-full w-64 flex-col overflow-y-auto bg-white py-4'>
       {articles.map((article) => (
         <TreeNode key={article.id} node={article} />
       ))}
