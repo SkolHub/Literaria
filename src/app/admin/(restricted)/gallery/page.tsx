@@ -1,6 +1,8 @@
 'use client';
 
+import { saveGalleryImage } from '@/api/admin/gallery';
 import { getGalleryPhotos } from '@/api/gallery';
+import { deleteStorageObject } from '@/api/storage';
 import Photos from '@/components/misc/photos';
 import MainTitle from '@/components/typography/main-title';
 import { Button } from '@/components/ui/button';
@@ -136,32 +138,53 @@ export default function () {
 
     setUploadError(null);
 
-    const uploadedFiles = await startUpload([newImageFile], {
-      title,
-      description: imageDescription.trim()
-    });
+    let uploadedFiles;
+    let uploadedFile;
 
-    const uploadedFile = uploadedFiles?.[0];
+    try {
+      uploadedFiles = await startUpload([newImageFile]);
+      uploadedFile = uploadedFiles?.[0];
 
-    if (!uploadedFile?.serverData) {
-      setUploadError('Încărcarea a eșuat. Imaginea nu a fost salvată.');
-      return;
-    }
-
-    addImageToGroups({
-      key: uploadedFile.serverData.fileKey,
-      url: uploadedFile.serverData.url,
-      metadata: {
-        title: uploadedFile.serverData.title,
-        description: uploadedFile.serverData.description || undefined
+      if (!uploadedFile?.ufsUrl || !uploadedFile.key) {
+        throw new Error('Image upload failed');
       }
-    });
 
-    await loadGalleryPhotos();
+      const savedImage = await saveGalleryImage({
+        fileKey: uploadedFile.key,
+        url: uploadedFile.ufsUrl,
+        title,
+        description: imageDescription
+      });
 
-    resetUploadForm();
-    setIsAddImageModalOpen(null);
-    setIsNewCategoryModalOpen(false);
+      addImageToGroups({
+        key: savedImage.fileKey,
+        url: savedImage.url,
+        metadata: {
+          title: savedImage.title,
+          description: savedImage.description || undefined
+        }
+      });
+
+      await loadGalleryPhotos();
+
+      resetUploadForm();
+      setIsAddImageModalOpen(null);
+      setIsNewCategoryModalOpen(false);
+    } catch (error) {
+      console.error('Error uploading gallery image:', error);
+      setUploadError('Încărcarea a eșuat. Imaginea nu a fost salvată.');
+
+      if (uploadedFile?.ufsUrl) {
+        try {
+          await deleteStorageObject(uploadedFile.ufsUrl);
+        } catch (cleanupError) {
+          console.error(
+            'Error deleting gallery image after failed save:',
+            cleanupError
+          );
+        }
+      }
+    }
   };
 
   if (!files) {

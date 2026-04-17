@@ -1,8 +1,5 @@
 import { isAdminRequest } from '@/api/admin/auth';
-import { db } from '@/db/db';
-import { galleryImages } from '@/db/schema/gallery-images';
 import { createUploadthing, type FileRouter } from 'uploadthing/next';
-import { z } from 'zod';
 
 const f = createUploadthing();
 
@@ -21,46 +18,11 @@ export const uploadRouter = {
     })
     .onUploadComplete(() => {}),
   galleryImage: f(imageUploadConfig)
-    .input(
-      z.object({
-        title: z.string().trim().min(1),
-        description: z.string().trim().default('')
-      })
-    )
-    .middleware(async ({ req, input }) => {
+    .middleware(async ({ req }) => {
       await isAdminRequest(req);
-      return {
-        title: input.title,
-        description: input.description
-      };
+      return {};
     })
-    .onUploadComplete(async ({ file, metadata }) => {
-      try {
-        await db.insert(galleryImages).values({
-          fileKey: file.key,
-          url: file.ufsUrl,
-          title: metadata.title,
-          description: metadata.description
-        });
-
-        return {
-          fileKey: file.key,
-          url: file.ufsUrl,
-          title: metadata.title,
-          description: metadata.description
-        };
-      } catch (error) {
-        console.error('Failed to persist gallery image after UploadThing callback', {
-          fileKey: file.key,
-          url: file.ufsUrl,
-          title: metadata.title,
-          description: metadata.description,
-          error
-        });
-
-        throw error;
-      }
-    })
+    .onUploadComplete(() => {})
 } satisfies FileRouter;
 
 export type UploadRouter = typeof uploadRouter;
