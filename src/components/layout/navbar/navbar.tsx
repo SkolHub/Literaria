@@ -71,9 +71,9 @@ export default function ({
           <div
             className='pointer-events-none absolute inset-x-0 top-0 z-0'
             style={{
-              height: '18rem',
+              height: '14rem',
               background:
-                'linear-gradient(180deg, rgba(var(--literaria-article-nav-rgb, 255, 255, 255), calc(var(--literaria-article-nav-gradient-opacity, 0) * 0.98)) 0%, rgba(var(--literaria-article-nav-rgb, 255, 255, 255), calc(var(--literaria-article-nav-gradient-opacity, 0) * 0.92)) 18%, rgba(var(--literaria-article-nav-rgb, 255, 255, 255), calc(var(--literaria-article-nav-gradient-opacity, 0) * 0.76)) 42%, rgba(var(--literaria-article-nav-rgb, 255, 255, 255), calc(var(--literaria-article-nav-gradient-opacity, 0) * 0.46)) 68%, rgba(var(--literaria-article-nav-rgb, 255, 255, 255), calc(var(--literaria-article-nav-gradient-opacity, 0) * 0.18)) 86%, rgba(var(--literaria-article-nav-rgb, 255, 255, 255), 0) 100%)'
+                'linear-gradient(180deg, rgba(var(--literaria-article-nav-rgb, 255, 255, 255), calc(var(--literaria-article-nav-gradient-opacity, 0) * 1)) 0%, rgba(var(--literaria-article-nav-rgb, 255, 255, 255), calc(var(--literaria-article-nav-gradient-opacity, 0) * 0.92)) 16%, rgba(var(--literaria-article-nav-rgb, 255, 255, 255), calc(var(--literaria-article-nav-gradient-opacity, 0) * 0.62)) 38%, rgba(var(--literaria-article-nav-rgb, 255, 255, 255), calc(var(--literaria-article-nav-gradient-opacity, 0) * 0.24)) 68%, rgba(var(--literaria-article-nav-rgb, 255, 255, 255), 0) 100%)'
             }}
           />
         )}

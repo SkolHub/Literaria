@@ -33,7 +33,8 @@ export default function ({ article }: { article: Article }) {
       />
       <section className='px-[9rem] pb-4 mobile:px-4'>
         <article
-          className='pb-12 pt-2 mobile:max-w-none mobile:pt-4'
+          data-article-text-column
+          className='pb-52 pt-2 mobile:max-w-none mobile:pb-16 mobile:pt-4'
           style={{
             maxWidth: '75ch',
             margin: '0 auto'
@@ -66,8 +67,8 @@ export default function ({ article }: { article: Article }) {
       </section>
       {/*@ts-ignore*/}
       {article.siblings.length > 0 && (
-        <section className='relative mx-[8rem] flex flex-col pt-10 mobile:mx-0'>
-          <SmallTitle className='mb-8 px-8 text-left text-4xl font-bold italic laptop:px-5 laptop:text-3xl'>
+        <section className='relative flex w-full flex-col'>
+          <SmallTitle className='mb-8 px-[8rem] text-left text-4xl font-bold italic laptop:px-20 laptop:text-3xl mobile:px-4'>
             {/*@ts-ignore*/}
             Alte articole din {article.parent?.title}
           </SmallTitle>
@@ -75,6 +76,9 @@ export default function ({ article }: { article: Article }) {
             className='!h-[32rem] mobile:!h-[20rem]'
             // @ts-ignore
             articleCount={article.siblings.length}
+            edgePadding={{ desktop: 128, laptop: 80, mobile: 16 }}
+            loop={false}
+            showEdgeGradients
           >
             {/*@ts-ignore*/}
             {article.siblings.map((sibling, index) => (
@@ -89,14 +93,17 @@ export default function ({ article }: { article: Article }) {
       )}
       {/*@ts-ignore*/}
       {article.authorOtherArticles.length > 0 && (
-        <section className='relative mx-[8rem] flex flex-col mobile:mx-0 mobile:pt-0'>
-          <SmallTitle className='mb-8 px-8 text-left text-4xl font-bold italic laptop:px-5 laptop:text-3xl'>
+        <section className='relative flex w-full flex-col mobile:pt-0'>
+          <SmallTitle className='mb-8 px-[8rem] text-left text-4xl font-bold italic laptop:px-20 laptop:text-3xl mobile:px-4'>
             Alte articole scrise de {article.author}
           </SmallTitle>
           <ArticleList
             className='!h-[32rem] mobile:!h-[20rem]'
             // @ts-ignore
             articleCount={article.authorOtherArticles.length}
+            edgePadding={{ desktop: 128, laptop: 80, mobile: 16 }}
+            loop={false}
+            showEdgeGradients
           >
             {/*@ts-ignore*/}
             {article.authorOtherArticles.map((sibling, index) => (

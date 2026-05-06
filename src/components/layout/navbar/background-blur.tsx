@@ -18,7 +18,7 @@ export default function ({
           ? {
               backdropFilter: 'blur(10px)',
               backgroundColor: 'rgba(0,0,0,0.7)',
-              zIndex: 9
+              zIndex: 900
             }
           : {
               backdropFilter: 'blur(0px)',

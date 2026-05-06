@@ -1,6 +1,7 @@
 'use client';
 
 import BackButton from '@/components/misc/back-button';
+import PhotoWithBlur from '@/components/misc/photo-with-blur';
 import { IncludeBorder } from '@/components/rounded-borders/include-border';
 import { RoundedBorder } from '@/components/rounded-borders/rounded-border';
 import { RoundedTextBorder } from '@/components/rounded-borders/rounded-text-border';
@@ -107,25 +108,62 @@ export default function LeafArticleHero({
   const mainRef = useRef<HTMLElement | null>(null);
   const mergedChipRef = useRef<boolean>(false);
 
-  const [viewportHeight, setViewportHeight] = useState<number>(0);
+  const [viewportSize, setViewportSize] = useState<{
+    width: number;
+    height: number;
+  }>({ width: 0, height: 0 });
   const [navRgb, setNavRgb] = useState<string>('30, 30, 30');
   const [navForegroundRgb, setNavForegroundRgb] =
     useState<string>('255, 255, 255');
   const [useMergedChip, setUseMergedChip] = useState<boolean>(false);
+  const [articleTextWidth, setArticleTextWidth] = useState<number | null>(null);
   const chipMergeThreshold = 0.72;
 
   useEffect(() => {
     mainRef.current = document.getElementById('main') as HTMLElement | null;
+    let articleTextResizeObserver: ResizeObserver | null = null;
 
-    const updateViewportHeight = () => {
-      setViewportHeight(window.innerHeight);
+    const updateArticleTextWidth = () => {
+      const articleTextColumn = document.querySelector<HTMLElement>(
+        '[data-article-text-column]'
+      );
+
+      if (articleTextColumn) {
+        setArticleTextWidth(articleTextColumn.getBoundingClientRect().width);
+      }
     };
 
-    updateViewportHeight();
-    window.addEventListener('resize', updateViewportHeight);
+    const updateViewportSize = () => {
+      setViewportSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+      updateArticleTextWidth();
+    };
+
+    const observeArticleTextColumn = () => {
+      const articleTextColumn = document.querySelector<HTMLElement>(
+        '[data-article-text-column]'
+      );
+
+      if (!articleTextColumn) {
+        return;
+      }
+
+      articleTextResizeObserver = new ResizeObserver(updateArticleTextWidth);
+      articleTextResizeObserver.observe(articleTextColumn);
+      updateArticleTextWidth();
+    };
+
+    updateViewportSize();
+    window.addEventListener('resize', updateViewportSize);
+
+    const animationFrame = requestAnimationFrame(observeArticleTextColumn);
 
     return () => {
-      window.removeEventListener('resize', updateViewportHeight);
+      articleTextResizeObserver?.disconnect();
+      cancelAnimationFrame(animationFrame);
+      window.removeEventListener('resize', updateViewportSize);
     };
   }, []);
 
@@ -164,7 +202,8 @@ export default function LeafArticleHero({
     clamp(value / threshold, 0, 1)
   );
 
-  const safeViewportHeight = viewportHeight || 900;
+  const safeViewportWidth = viewportSize.width || 1440;
+  const safeViewportHeight = viewportSize.height || 900;
   const heroHeight = useTransform(
     scrollProgress,
     [0, 1],
@@ -178,10 +217,26 @@ export default function LeafArticleHero({
     [0, 1],
     [0, isMobile ? 80 : 128]
   );
+  const scrolledHeroWidth =
+    articleTextWidth === null
+      ? null
+      : Math.min(
+          safeViewportWidth - (isMobile ? 32 : 0),
+          articleTextWidth * 1.2
+        );
+  const scrolledHeroInset =
+    scrolledHeroWidth === null
+      ? isMobile
+        ? 16
+        : 144
+      : Math.max(
+          (safeViewportWidth - scrolledHeroWidth) / 2,
+          isMobile ? 16 : 0
+        );
   const heroInset = useTransform(
     scrollProgress,
     [0, 1],
-    [0, isMobile ? 16 : 144]
+    [0, scrolledHeroInset]
   );
   const heroRadius = useTransform(
     scrollProgress,
@@ -297,17 +352,8 @@ export default function LeafArticleHero({
             borderRadius: heroRadius
           }}
         >
-          <img
-            className='absolute inset-0 h-full w-full scale-110 object-cover blur-3xl brightness-75'
-            src={image}
-            alt={title}
-          />
+          <PhotoWithBlur src={image} alt={title} lockBehaviorOnResize />
           <div className='absolute inset-0 bg-black/10' />
-          <img
-            className='relative h-full w-full object-cover'
-            src={image}
-            alt={title}
-          />
         </motion.div>
         <motion.div
           className='absolute inset-x-0 z-[2] flex justify-center px-3'
