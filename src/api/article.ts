@@ -24,7 +24,7 @@ export async function getTitleIDByLegacyID(id: number) {
         titleID: articles.titleID
       })
       .from(articles)
-      .where(eq(articles.originalID, id))
+      .where(and(eq(articles.originalID, id), eq(articles.deleted, false)))
   )[0];
 
   if (!result) {
@@ -37,7 +37,7 @@ export async function getTitleIDByLegacyID(id: number) {
 export async function getArticleByTitleID(title: string) {
   // First get the main article to get the author
   const articleData = await db.query.articles.findFirst({
-    where: eq(articles.titleID, title),
+    where: and(eq(articles.titleID, title), eq(articles.deleted, false)),
     columns: {
       image: true,
       title: true,
@@ -49,6 +49,7 @@ export async function getArticleByTitleID(title: string) {
     },
     with: {
       children: {
+        where: eq(articles.deleted, false),
         columns: {
           image: true,
           title: true,
@@ -58,7 +59,9 @@ export async function getArticleByTitleID(title: string) {
           titleID: true
         },
         with: {
-          children: true
+          children: {
+            where: eq(articles.deleted, false)
+          }
         }
       },
       parent: {
@@ -69,7 +72,10 @@ export async function getArticleByTitleID(title: string) {
         },
         with: {
           children: {
-            where: ne(articles.titleID, title),
+            where: and(
+              ne(articles.titleID, title),
+              eq(articles.deleted, false)
+            ),
             columns: {
               image: true,
               title: true,
@@ -97,12 +103,14 @@ export async function getArticleByTitleID(title: string) {
                        AS (SELECT ${articles.id}, ${articles.parentID}, ${articles.title}, ${articles.titleID}
                            FROM ${articles}
                            WHERE ${articles.titleID} = ${title}
+                             AND ${articles.deleted} = false
 
                            UNION ALL
 
                            SELECT a.id, a.parent_id, a.title, a.title_id
                            FROM ${articles} a
-                                  INNER JOIN article_hierarchy ah ON a.id = ah.parent_id)
+                                  INNER JOIN article_hierarchy ah ON a.id = ah.parent_id
+                           WHERE a.deleted = false)
       SELECT id, title, title_id
       FROM article_hierarchy
       WHERE title_id != ${title}
@@ -123,7 +131,8 @@ export async function getArticleByTitleID(title: string) {
       .where(
         and(
           eq(articles.author, articleData.author),
-          ne(articles.titleID, title)
+          ne(articles.titleID, title),
+          eq(articles.deleted, false)
         )
       )
       .orderBy(desc(articles.createdAt))
@@ -149,8 +158,30 @@ export async function getLatestArticles() {
       titleID: articles.titleID
     })
     .from(articles)
-    .limit(10)
-    .orderBy(desc(articles.createdAt));
+    .where(
+      sql`
+      ${articles.deleted} = false
+      AND
+      ${articles.id} NOT IN (
+        WITH RECURSIVE excluded_articles AS (
+          SELECT id
+          FROM ${articles}
+          WHERE title_id = 'bacalaureat-10'
+            AND deleted = false
+
+          UNION ALL
+
+          SELECT child.id
+          FROM ${articles} child
+          INNER JOIN excluded_articles excluded ON child.parent_id = excluded.id
+          WHERE child.deleted = false
+        )
+        SELECT id FROM excluded_articles
+      )
+    `
+    )
+    .orderBy(desc(articles.createdAt))
+    .limit(10);
 }
 
 export async function getHighlightedArticles() {
@@ -165,12 +196,13 @@ export async function getHighlightedArticles() {
       highlightID: highlightArticles.id
     })
     .from(highlightArticles)
-    .innerJoin(articles, eq(highlightArticles.articleID, articles.id));
+    .innerJoin(articles, eq(highlightArticles.articleID, articles.id))
+    .where(eq(articles.deleted, false));
 }
 
 export async function getCategories() {
   const result = await db.query.articles.findMany({
-    where: isNull(articles.parentID),
+    where: and(isNull(articles.parentID), eq(articles.deleted, false)),
     columns: {
       title: true,
       id: true,
@@ -178,6 +210,7 @@ export async function getCategories() {
     },
     with: {
       children: {
+        where: eq(articles.deleted, false),
         orderBy: [asc(articles.createdAt)],
         columns: {
           title: true,
@@ -186,6 +219,7 @@ export async function getCategories() {
         },
         with: {
           children: {
+            where: eq(articles.deleted, false),
             columns: {
               title: true,
               id: true,
@@ -193,6 +227,7 @@ export async function getCategories() {
             },
             with: {
               children: {
+                where: eq(articles.deleted, false),
                 columns: {
                   title: true,
                   id: true,
@@ -242,6 +277,7 @@ export async function getLatestArticleWithAncestor(ancestorIds: number[]) {
              a.title_id
       FROM articles a
       WHERE a.parent_id IN (SELECT unnest(string_to_array(${ancestorIdsString}, ',')::integer[]))
+        AND a.deleted = false
 
       UNION ALL
 
@@ -254,7 +290,8 @@ export async function getLatestArticleWithAncestor(ancestorIds: number[]) {
              child.parent_id,
              child.title_id
       FROM articles child
-             INNER JOIN article_descendants ad ON ad.id = child.parent_id)
+             INNER JOIN article_descendants ad ON ad.id = child.parent_id
+      WHERE child.deleted = false)
     SELECT id,
            title,
            image,
@@ -271,7 +308,7 @@ export async function getLatestArticleWithAncestor(ancestorIds: number[]) {
     const articleId = result.rows[0].id as number;
 
     return db.query.articles.findFirst({
-      where: eq(articles.id, articleId),
+      where: and(eq(articles.id, articleId), eq(articles.deleted, false)),
       columns: {
         title: true,
         author: true,
@@ -297,34 +334,37 @@ export async function getArticleNames() {
       parentTitle: parent.title
     })
     .from(articles)
-    .leftJoin(parent, eq(parent.id, articles.parentID));
+    .leftJoin(parent, eq(parent.id, articles.parentID))
+    .where(eq(articles.deleted, false));
 }
 
 export async function getArticlesStats() {
   const [articlesCount, authorsCount, movieReviewsCount, picturesCount] =
     await Promise.all([
-    db
-      .select({
-        count: count()
-      })
-      .from(articles),
-    db
-      .select({
-        count: countDistinct(articles.author)
-      })
-      .from(articles),
-    db
-      .select({
-        count: count()
-      })
-      .from(articles)
-      .where(eq(articles.parentID, 9)),
-    db
-      .select({
-        count: count()
-      })
-      .from(galleryImages)
-  ]);
+      db
+        .select({
+          count: count()
+        })
+        .from(articles)
+        .where(eq(articles.deleted, false)),
+      db
+        .select({
+          count: countDistinct(articles.author)
+        })
+        .from(articles)
+        .where(eq(articles.deleted, false)),
+      db
+        .select({
+          count: count()
+        })
+        .from(articles)
+        .where(and(eq(articles.parentID, 9), eq(articles.deleted, false))),
+      db
+        .select({
+          count: count()
+        })
+        .from(galleryImages)
+    ]);
 
   return {
     articlesCount: articlesCount[0].count,
@@ -336,6 +376,7 @@ export async function getArticlesStats() {
 
 export async function getArticleIDs() {
   const result = await db.query.articles.findMany({
+    where: eq(articles.deleted, false),
     columns: {
       titleID: true
     }

@@ -7,6 +7,7 @@ import { articles } from '@/db/schema/articles';
 import { toKebabCase } from '@/lib/utils/kebab-case';
 import { highlightArticles } from '@db/*';
 import { and, eq, ne } from 'drizzle-orm';
+import { revalidatePath } from 'next/cache';
 
 export async function getAllSidebarArticles() {
   await isAdmin();
@@ -19,7 +20,8 @@ export async function getAllSidebarArticles() {
       author: articles.author,
       titleID: articles.titleID
     })
-    .from(articles);
+    .from(articles)
+    .where(eq(articles.deleted, false));
 }
 
 export async function getAllArticlesHighlights() {
@@ -33,7 +35,8 @@ export async function getAllArticlesHighlights() {
       image: articles.image,
       createdAt: articles.createdAt
     })
-    .from(articles);
+    .from(articles)
+    .where(eq(articles.deleted, false));
 }
 
 export async function updateHighlightedArticles(ids: [number, number, number]) {
@@ -65,7 +68,7 @@ async function getParentTitleID(parentID: number | null) {
   }
 
   const parentArticle = await db.query.articles.findFirst({
-    where: eq(articles.id, parentID),
+    where: and(eq(articles.id, parentID), eq(articles.deleted, false)),
     columns: {
       titleID: true
     }
@@ -208,7 +211,7 @@ export async function updateArticle(
   await isAdmin();
 
   const existingArticle = await db.query.articles.findFirst({
-    where: eq(articles.id, id),
+    where: and(eq(articles.id, id), eq(articles.deleted, false)),
     columns: {
       title: true,
       parentID: true
@@ -307,4 +310,76 @@ export async function updateArticle(
   //   ${articles.path}
   //   )`);
   // }
+}
+
+export async function deleteArticle(id: number) {
+  await isAdmin();
+
+  const article = await db.query.articles.findFirst({
+    where: and(eq(articles.id, id), eq(articles.deleted, false)),
+    columns: {
+      id: true,
+      title: true,
+      image: true
+    }
+  });
+
+  if (!article) {
+    throw new Error('Article not found');
+  }
+
+  const childArticles = await db
+    .select({
+      id: articles.id,
+      title: articles.title
+    })
+    .from(articles)
+    .where(eq(articles.parentID, id));
+
+  const highlightedArticleReferences = await db
+    .select({
+      id: highlightArticles.id
+    })
+    .from(highlightArticles)
+    .where(eq(highlightArticles.articleID, id));
+
+  if (childArticles.length > 0 || highlightedArticleReferences.length > 0) {
+    const blockers = [
+      childArticles.length > 0
+        ? `Articolul are ${childArticles.length} ${
+            childArticles.length === 1 ? 'subarticol' : 'subarticole'
+          }: ${childArticles
+            .map(
+              (childArticle) =>
+                `"${childArticle.title}" (id ${childArticle.id})`
+            )
+            .join(', ')}.`
+        : null,
+      highlightedArticleReferences.length > 0
+        ? `Articolul este recomandat în ${
+            highlightedArticleReferences.length === 1 ? 'slotul' : 'sloturile'
+          } ${highlightedArticleReferences
+            .map((reference) => `id ${reference.id}`)
+            .join(', ')}.`
+        : null
+    ].filter(Boolean);
+
+    throw new Error(
+      `Articolul "${article.title}" nu poate fi șters deoarece există referințe la el: ${blockers.join(' ')}`
+    );
+  }
+
+  await db
+    .update(articles)
+    .set({
+      deleted: true
+    })
+    .where(eq(articles.id, id));
+
+  revalidatePath('/', 'layout');
+  revalidatePath('/admin/article', 'layout');
+
+  return {
+    image: article.image
+  };
 }

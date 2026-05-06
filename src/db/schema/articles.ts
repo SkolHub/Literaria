@@ -1,7 +1,14 @@
 import { articleContents } from '@/db/schema/article-contents';
 import { highlightArticles } from '@/db/schema/highlight-articles';
 import { relations } from 'drizzle-orm';
-import { index, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  index,
+  integer,
+  pgTable,
+  text,
+  timestamp
+} from 'drizzle-orm/pg-core';
 
 export const articles = pgTable(
   'articles',
@@ -14,6 +21,7 @@ export const articles = pgTable(
     titleID: text('title_id').notNull().unique(),
     author: text('author').notNull(),
     image: text('image').notNull(),
+    deleted: boolean('deleted').notNull().default(false),
     path: integer('path').notNull().array(),
     categoryID: integer('category_id'),
     parentID: integer('parent_id'),

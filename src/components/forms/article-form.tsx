@@ -1,14 +1,29 @@
 'use client';
 
-import { createArticle, updateArticle } from '@/api/admin/article';
+import {
+  createArticle,
+  deleteArticle,
+  updateArticle
+} from '@/api/admin/article';
 import { deleteStorageObject } from '@/api/storage';
 import ArticleParentPicker from '@/components/forms/article-parent-picker';
 import UploadImage from '@/components/forms/upload-image';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Combobox } from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
 import { useUploadThing } from '@/lib/uploadthing-client';
-import { Save } from 'lucide-react';
+import { Save, Trash2 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -89,8 +104,9 @@ export default function ArticleForm(props: {
   const [parentID, setParentID] = useState<string>(
     props.parentID?.toString() ?? ROOT_PARENT_VALUE
   );
-  const [status, setStatus] = useState<'idle' | 'saving'>('idle');
-  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<'idle' | 'saving' | 'deleting'>('idle');
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
   const { startUpload, isUploading } = useUploadThing('articleCover', {
     onUploadError: (uploadError) => {
       console.error('Error uploading article cover:', uploadError);
@@ -128,6 +144,8 @@ export default function ArticleForm(props: {
   const selectedParent =
     parentID !== ROOT_PARENT_VALUE ? articleMap.get(+parentID) : undefined;
 
+  const isEditing = typeof props.id === 'number';
+
   const isFormIncomplete =
     title.trim().length === 0 ||
     author.trim().length === 0 ||
@@ -136,7 +154,7 @@ export default function ArticleForm(props: {
   return (
     <div className='flex w-full max-w-[980px] flex-col gap-5'>
       <h1 className='text-3xl font-semibold tracking-tight text-neutral-950'>
-        {props.id ? 'Editează articolul' : 'Creează un articol nou'}
+        {isEditing ? 'Editează articolul' : 'Creează un articol nou'}
       </h1>
 
       <div className='xl:grid-cols-[minmax(0,1fr)_280px] grid gap-5'>
@@ -213,9 +231,9 @@ export default function ArticleForm(props: {
             isUploading={isUploading}
           />
 
-          {error ? (
+          {saveError ? (
             <div className='rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700'>
-              {error}
+              {saveError}
             </div>
           ) : null}
 
@@ -224,7 +242,7 @@ export default function ArticleForm(props: {
             className='h-11 w-full rounded-xl'
             onClick={async () => {
               setStatus('saving');
-              setError(null);
+              setSaveError(null);
 
               const previousImage = image;
               let nextImage = image;
@@ -286,7 +304,7 @@ export default function ArticleForm(props: {
                   await deleteStorageObject(uploadedImageUrl);
                 }
 
-                setError(
+                setSaveError(
                   'Salvarea a eșuat. Verifică datele completate și încearcă din nou.'
                 );
               } finally {
@@ -299,6 +317,86 @@ export default function ArticleForm(props: {
           </Button>
         </div>
       </div>
+
+      {isEditing ? (
+        <div className='mt-12 border-t border-neutral-200 pt-6'>
+          <div className='mb-4'>
+            <h2 className='text-lg font-semibold text-red-950'>Ștergere</h2>
+            <p className='mt-1 text-sm text-red-700'>
+              Ștergerea articolului este permanentă.
+            </p>
+          </div>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                type='button'
+                variant='destructive'
+                disabled={status !== 'idle'}
+                className='h-11 rounded-xl'
+              >
+                <Trash2 className='h-4 w-4' />
+                Șterge articolul
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Ștergi acest articol?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Această acțiune nu poate fi anulată. Articolele cu subarticole
+                  sau cele recomandate trebuie desprinse înainte de ștergere.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Anulează</AlertDialogCancel>
+                <AlertDialogAction
+                  className='bg-red-500 text-neutral-50 shadow-sm hover:bg-red-500/90'
+                  onClick={async () => {
+                    if (!props.id) {
+                      return;
+                    }
+
+                    setStatus('deleting');
+                    setDeleteError(null);
+
+                    try {
+                      const deletedArticle = await deleteArticle(props.id);
+
+                      if (deletedArticle.image) {
+                        try {
+                          await deleteStorageObject(deletedArticle.image);
+                        } catch (cleanupError) {
+                          console.error(
+                            'Failed to delete article image:',
+                            cleanupError
+                          );
+                        }
+                      }
+
+                      router.push('/admin/article/create');
+                    } catch (deleteError) {
+                      setDeleteError(
+                        deleteError instanceof Error
+                          ? deleteError.message
+                          : 'Ștergerea a eșuat.'
+                      );
+                      setStatus('idle');
+                    }
+                  }}
+                >
+                  {status === 'deleting' ? 'Se șterge...' : 'Șterge'}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
+          {deleteError ? (
+            <div className='mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700'>
+              {deleteError}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }
