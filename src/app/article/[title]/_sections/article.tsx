@@ -42,9 +42,9 @@ export default function ({ article }: { article: Article }) {
         >
           <div className='mb-8 flex items-start justify-between gap-x-6 gap-y-3'>
             <div className='flex flex-wrap items-center gap-1'>
-              {(article as any).parentChain
+              {[...(article.parentChain ?? [])]
                 .reverse()
-                .map((parent: any, index: any, array: any) => (
+                .map((parent, index, array) => (
                   <Link
                     href={`/article/${parent.title_id}`}
                     key={index}
@@ -60,28 +60,22 @@ export default function ({ article }: { article: Article }) {
             </div>
             <Timestamp time={article.createdAt} />
           </div>
-          <MarkdownRenderer>
-            {(article.content as any)?.content ?? ''}
-          </MarkdownRenderer>
+          <MarkdownRenderer>{article.content?.content ?? ''}</MarkdownRenderer>
         </article>
       </section>
-      {/*@ts-ignore*/}
-      {article.siblings.length > 0 && (
+      {(article.siblings?.length ?? 0) > 0 && (
         <section className='relative flex w-full flex-col'>
           <SmallTitle className='mb-8 px-[8rem] text-left text-4xl font-bold italic laptop:px-20 laptop:text-3xl mobile:px-4'>
-            {/*@ts-ignore*/}
             Alte articole din {article.parent?.title}
           </SmallTitle>
           <ArticleList
             className='!h-[32rem] mobile:!h-[20rem]'
-            // @ts-ignore
-            articleCount={article.siblings.length}
+            articleCount={article.siblings?.length ?? 0}
             edgePadding={{ desktop: 128, laptop: 80, mobile: 16 }}
             loop={false}
             showEdgeGradients
           >
-            {/*@ts-ignore*/}
-            {article.siblings.map((sibling, index) => (
+            {article.siblings?.map((sibling, index) => (
               <MediumArticleCard
                 article={sibling}
                 key={index}
@@ -91,22 +85,19 @@ export default function ({ article }: { article: Article }) {
           </ArticleList>
         </section>
       )}
-      {/*@ts-ignore*/}
-      {article.authorOtherArticles.length > 0 && (
+      {(article.authorOtherArticles?.length ?? 0) > 0 && (
         <section className='relative flex w-full flex-col mobile:pt-0'>
           <SmallTitle className='mb-8 px-[8rem] text-left text-4xl font-bold italic laptop:px-20 laptop:text-3xl mobile:px-4'>
             Alte articole scrise de {article.author}
           </SmallTitle>
           <ArticleList
             className='!h-[32rem] mobile:!h-[20rem]'
-            // @ts-ignore
-            articleCount={article.authorOtherArticles.length}
+            articleCount={article.authorOtherArticles?.length ?? 0}
             edgePadding={{ desktop: 128, laptop: 80, mobile: 16 }}
             loop={false}
             showEdgeGradients
           >
-            {/*@ts-ignore*/}
-            {article.authorOtherArticles.map((sibling, index) => (
+            {article.authorOtherArticles?.map((sibling, index) => (
               <MediumArticleCard
                 article={sibling}
                 key={index}

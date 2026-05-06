@@ -15,17 +15,37 @@ export interface ArticleModel {
   createdAt: string;
 }
 
+export interface ArticleContent {
+  articleID: number;
+  content: string;
+}
+
+export interface ArticleParent {
+  id: number;
+  title: string;
+  titleID: string;
+}
+
+export interface ArticleParentChainItem {
+  id: number;
+  title: string;
+  title_id: string;
+}
+
 export interface Article {
   titleID: string;
   id: number;
   title: string;
   author: string;
-  createdAt: Date;
+  createdAt: Date | string;
   image: string;
-  content: string;
+  content?: ArticleContent | null;
   children: Article[];
   parentID: number | null;
-  parent: Article;
+  parent?: (ArticleParent & { children?: ArticlePreview[] }) | null;
+  parentChain?: ArticleParentChainItem[];
+  siblings?: ArticlePreview[];
+  authorOtherArticles?: ArticlePreview[];
 }
 
 export interface ArticlePreview {
@@ -50,7 +70,7 @@ export interface Image {
 }
 
 export interface CarouselCategoryModel {
-  image: any;
-  logo: any;
+  image: string;
+  logo: string;
   title: string;
 }

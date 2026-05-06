@@ -3,7 +3,7 @@ import PhotoWithBlur from '@/components/misc/photo-with-blur';
 import Timestamp from '@/components/misc/timestamp';
 import SmallTitle from '@/components/typography/small-title';
 import TitleLabel from '@/components/typography/title-label';
-import { Article } from '@/lib/types';
+import { ArticlePreview } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 
@@ -12,7 +12,7 @@ const MediumArticleCard = ({
   className,
   titleClassName
 }: {
-  article: Article;
+  article: ArticlePreview;
   className?: string;
   titleClassName?: string;
 }) => {
@@ -31,7 +31,7 @@ const MediumArticleCard = ({
         />
         <Timestamp
           className='absolute bottom-[2.6rem] right-[2.6rem] mobile:bottom-4 mobile:right-4'
-          time={createdAt}
+          time={createdAt ?? new Date()}
         />
         <OpenLinkButton className='absolute right-[2.6rem] top-[2.6rem] mobile:right-4 mobile:top-4' />
       </div>

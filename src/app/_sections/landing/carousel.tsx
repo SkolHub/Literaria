@@ -7,14 +7,14 @@ import SliderLabel from '@/app/_sections/landing/slider-label';
 import useCarousel from '@/app/_sections/landing/use-carousel';
 import NextItemButton from '@/components/buttons/next-item-button';
 import { categories } from '@/lib/data/categories';
-import { Article } from '@/lib/types';
+import { ArticlePreview } from '@/lib/types';
 
 export default function Carousel({
   literatureArticle,
   moviesArticle
 }: {
-  literatureArticle: Article;
-  moviesArticle: Article;
+  literatureArticle: ArticlePreview | null;
+  moviesArticle: ArticlePreview | null;
 }) {
   const { currentSlide, setCurrentSlide } = useCarousel();
 

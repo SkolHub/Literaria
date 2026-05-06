@@ -13,7 +13,7 @@ export default async function () {
       </MainTitle>
       <ArticleList className='pb-8 mobile:pb-4' articleCount={articles.length}>
         {articles.map((article, index) => (
-          <MediumArticleCard article={article as any} key={index} />
+          <MediumArticleCard article={article} key={index} />
         ))}
       </ArticleList>
     </section>

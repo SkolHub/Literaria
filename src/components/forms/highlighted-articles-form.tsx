@@ -69,7 +69,9 @@ export default function HighlightedArticlesForm({
             placeholder='Selectează un articol...'
             selected={selectedArticle1.toString()}
             onChange={(value) => {
-              setSelectedArticle1(value as any);
+              if (typeof value === 'string') {
+                setSelectedArticle1(Number(value));
+              }
             }}
           />
           <div className={`group flex grow flex-col`}>
@@ -103,7 +105,9 @@ export default function HighlightedArticlesForm({
             placeholder='Selectează un articol...'
             selected={selectedArticle2.toString()}
             onChange={(value) => {
-              setSelectedArticle2(value as any);
+              if (typeof value === 'string') {
+                setSelectedArticle2(Number(value));
+              }
             }}
           />
           <div className={'group relative flex h-full grow'}>
@@ -154,7 +158,9 @@ export default function HighlightedArticlesForm({
             placeholder='Selectează un articol...'
             selected={selectedArticle3.toString()}
             onChange={(value) => {
-              setSelectedArticle3(value as any);
+              if (typeof value === 'string') {
+                setSelectedArticle3(Number(value));
+              }
             }}
           />
           <div className={`group flex h-full grow flex-col`}>

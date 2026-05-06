@@ -7,7 +7,7 @@ export default ({
   className = '',
   style
 }: {
-  time: Date;
+  time: Date | string;
   className?: string;
   style?: CSSProperties;
 }) => {

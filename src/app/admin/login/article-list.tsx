@@ -8,10 +8,16 @@ import {
   SelectValue
 } from '@/components/ui/select';
 import { Link as LinkIcon, Plus, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { ChangeEvent, useState } from 'react';
+
+type ChildArticle = {
+  id: number;
+  type: 'existing';
+  selectedArticle: number | null;
+};
 
 export default function ChildArticlesSection() {
-  const [childArticles, setChildArticles] = useState<any>([]);
+  const [childArticles, setChildArticles] = useState<ChildArticle[]>([]);
 
   const existingArticles = [
     { id: 1, title: 'Existing Article 1' },
@@ -30,8 +36,8 @@ export default function ChildArticlesSection() {
     ]);
   };
 
-  const handleFileUpload = (event: any) => {
-    const file = event.target.files[0];
+  const handleFileUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       // In a real app, you'd handle the file and redirect here
       window.location.href =
@@ -39,8 +45,8 @@ export default function ChildArticlesSection() {
     }
   };
 
-  const removeChildArticle = (id: any) => {
-    setChildArticles(childArticles.filter((article: any) => article.id !== id));
+  const removeChildArticle = (id: number) => {
+    setChildArticles(childArticles.filter((article) => article.id !== id));
   };
 
   return (
@@ -72,7 +78,7 @@ export default function ChildArticlesSection() {
 
       {/* Child Articles List */}
       <div className='space-y-4'>
-        {childArticles.map((article: any) => (
+        {childArticles.map((article) => (
           <Card key={article.id} className='relative'>
             <CardContent className='pt-6'>
               <Button

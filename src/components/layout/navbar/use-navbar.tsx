@@ -8,7 +8,7 @@ export default function useNavbar() {
   const pathName = usePathname();
   const [navMode, setNavMode] = useState<boolean>(false);
 
-  const main = useRef<any>(null);
+  const main = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     main.current = document.getElementById('main');

@@ -29,8 +29,7 @@ export default function ({
         <OpenLinkButton className='absolute right-8 top-8' />
         <Timestamp
           className='absolute bottom-8 right-8 tablet:bottom-3 tablet:right-3'
-          // @ts-ignore
-          time={createdAt}
+          time={createdAt ?? new Date()}
         />
       </div>
       <div className='mt-4 flex flex-col'>

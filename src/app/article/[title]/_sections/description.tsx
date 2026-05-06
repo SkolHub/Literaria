@@ -16,9 +16,7 @@ export default function ({ article }: { article: Article }) {
           {article.title}
         </MainTitle>
         <article className='pr-[10rem] text-lg mobile:pr-0'>
-          <MarkdownRenderer>
-            {(article.content as any)?.content ?? ''}
-          </MarkdownRenderer>
+          <MarkdownRenderer>{article.content?.content ?? ''}</MarkdownRenderer>
         </article>
       </div>
       <div className='h-100% flex min-w-[30%] max-w-[30%] flex-col gap-10 tablet:gap-6 mobile:max-w-none mobile:flex-row mobile:gap-3'>

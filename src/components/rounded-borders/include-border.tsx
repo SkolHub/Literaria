@@ -1,4 +1,10 @@
-import { Children, cloneElement, isValidElement, ReactNode } from 'react';
+import {
+  Children,
+  cloneElement,
+  isValidElement,
+  ReactElement,
+  ReactNode
+} from 'react';
 
 export function IncludeBorder({
   children,
@@ -9,8 +15,7 @@ export function IncludeBorder({
 }) {
   function addExtraProps(child: ReactNode) {
     if (isValidElement(child)) {
-      return cloneElement(child, {
-        // @ts-ignore
+      return cloneElement(child as ReactElement<Record<string, unknown>>, {
         'rounded-border': enabled ? 'true' : 'false'
       });
     }

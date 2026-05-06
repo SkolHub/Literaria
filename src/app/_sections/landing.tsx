@@ -11,10 +11,8 @@ export default async function Landing() {
   return (
     <section className='section flex-col items-center pb-4 pt-[12rem] mobile:pt-20'>
       <Carousel
-        // @ts-ignore
-        literatureArticle={latestLiteratureArticle}
-        // @ts-ignore
-        moviesArticle={latestMoviesArticle}
+        literatureArticle={latestLiteratureArticle ?? null}
+        moviesArticle={latestMoviesArticle ?? null}
       />
       <Link
         href='/#recommended'

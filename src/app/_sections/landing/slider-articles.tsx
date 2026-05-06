@@ -2,7 +2,7 @@ import OpenLinkButton from '@/components/buttons/open-link-button';
 import { IncludeBorder } from '@/components/rounded-borders/include-border';
 import { RoundedBorder } from '@/components/rounded-borders/rounded-border';
 import { RoundedTextBorder } from '@/components/rounded-borders/rounded-text-border';
-import { Article } from '@/lib/types';
+import { ArticlePreview } from '@/lib/types';
 import Link from 'next/link';
 
 export default function SliderArticles({
@@ -10,8 +10,8 @@ export default function SliderArticles({
   moviesArticle,
   currentSlide
 }: {
-  literatureArticle: Article;
-  moviesArticle: Article;
+  literatureArticle: ArticlePreview | null;
+  moviesArticle: ArticlePreview | null;
   currentSlide: number;
 }) {
   return (
@@ -50,18 +50,19 @@ function SliderArticle({
   moviesArticle,
   currentSlide
 }: {
-  literatureArticle: Article;
-  moviesArticle: Article;
+  literatureArticle: ArticlePreview | null;
+  moviesArticle: ArticlePreview | null;
   currentSlide: number;
 }) {
   if (currentSlide === 2) return null;
 
+  const article = currentSlide === 0 ? literatureArticle : moviesArticle;
+
+  if (!article) return null;
+
   return (
     <Link
-      href={
-        '/article/' +
-        (currentSlide === 0 ? literatureArticle.titleID : moviesArticle.titleID)
-      }
+      href={`/article/${article.titleID}`}
       className='group absolute left-[4.4rem] top-[11rem] flex flex-col items-start gap-6 px-3 py-1 mobile:left-[1.5rem] mobile:top-[6.5rem] mobile:gap-5'
     >
       <RoundedBorder
@@ -83,14 +84,10 @@ function SliderArticle({
           </div>
         </IncludeBorder>
         <RoundedTextBorder className='w-[450px] text-pretty text-3xl font-semibold text-black group-hover:underline laptop:w-[30vw] mobile:w-[70vw] mobile:text-xl'>
-          {currentSlide === 0 ? literatureArticle.title : moviesArticle.title}
+          {article.title}
         </RoundedTextBorder>
         <IncludeBorder>
-          <label>
-            {currentSlide === 0
-              ? literatureArticle.author
-              : moviesArticle.author}
-          </label>
+          <label>{article.author}</label>
         </IncludeBorder>
       </RoundedBorder>
       <OpenLinkButton className='ml-[-12px]' />

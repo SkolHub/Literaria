@@ -24,8 +24,8 @@ interface UseRoundedBorderProps {
 }
 
 interface UseRoundedBorderResult {
-  containerRef: React.RefObject<HTMLDivElement>;
-  svgRef: React.RefObject<SVGSVGElement>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  svgRef: React.RefObject<SVGSVGElement | null>;
 }
 
 function getRecursiveNodes(node: Element, nodes: Element[]) {
@@ -288,6 +288,5 @@ export function useRoundedBorder({
     };
   }, [updatePaths]);
 
-  // @ts-ignore
   return { containerRef, svgRef };
 }

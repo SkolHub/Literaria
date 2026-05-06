@@ -17,6 +17,12 @@ import {
 } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
+type ParentChainRow = {
+  id: number;
+  title: string;
+  title_id: string;
+};
+
 export async function getTitleIDByLegacyID(id: number) {
   const result = (
     await db
@@ -98,7 +104,7 @@ export async function getArticleByTitleID(title: string) {
   // Then get the remaining data using the author we retrieved
   const [parentsQuery, authorArticles] = await Promise.all([
     // Get all parent IDs using a recursive CTE
-    db.execute(sql`
+    db.execute<ParentChainRow>(sql`
       WITH RECURSIVE article_hierarchy
                        AS (SELECT ${articles.id}, ${articles.parentID}, ${articles.title}, ${articles.titleID}
                            FROM ${articles}
@@ -314,7 +320,8 @@ export async function getLatestArticleWithAncestor(ancestorIds: number[]) {
         author: true,
         createdAt: true,
         id: true,
-        titleID: true
+        titleID: true,
+        image: true
       }
     });
   }

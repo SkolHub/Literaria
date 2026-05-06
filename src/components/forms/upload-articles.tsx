@@ -1,4 +1,5 @@
 import { wordToMd } from '@/lib/utils/word-to-md';
+import { ChangeEvent } from 'react';
 
 export default function ({
   onUpload
@@ -10,15 +11,16 @@ export default function ({
     }[]
   ) => void;
 }) {
-  async function handleArticlesUpload(e: any) {
+  async function handleArticlesUpload(e: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
     const articles = await Promise.all(
-      Array.from(e.target.files).map((file: any) => wordToMd(file))
+      files.map((file) => wordToMd(file))
     );
 
     onUpload(
       articles.map((el, index) => ({
         content: el,
-        title: e.target.files[index].name.replace(/.[Dd][Oo][Cc][Xx]?/g, '')
+        title: files[index].name.replace(/.[Dd][Oo][Cc][Xx]?/g, '')
       }))
     );
   }
