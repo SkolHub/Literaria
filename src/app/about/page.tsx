@@ -48,17 +48,17 @@ export default async function () {
               constant și că munca elevilor va fi apreciată de cei care ne
               vizitează site-ul.
             </p>
-            <p className='py-2'>Prof. Raluca Iancău</p>
           </div>
           <div
             className={
-              'w-1/4 px-20 laptop:w-1/3 tablet:w-1/2 mobile:w-full mobile:max-w-[200px] mobile:px-0'
+              'w-1/4 px-20 flex-col laptop:w-1/3 tablet:w-1/2 mobile:w-full self-center flex justify-center mobile:max-w-[200px] mobile:px-0'
             }
           >
+            <p className='py-2 text-center font-bold'>Prof. Raluca Iancău</p>
             <img
               src='/raluca_iancau.jpg'
               alt='Raluca Iancau'
-              className='w-full rounded-3xl'
+              className='sm:h-[300px] rounded-3xl'
             />
           </div>
         </div>
@@ -87,6 +87,12 @@ export default async function () {
             <i className='fa fa-solid fa-pen-paintbrush pb-3 text-6xl'></i>
             <p className='py-1 font-semibold'>Design</p>
             <p>Simedrea Alexandru</p>
+          </div>
+          <div className='h-[80px] w-0.5 bg-black mobile:hidden'></div>
+          <div className='flex flex-col items-center justify-center'>
+            <i className='fa fa-solid fa-computer pb-3 text-6xl'></i>
+            <p className='py-1 font-semibold'>Administrarea site-ului</p>
+            <p>Stănescu Andrei</p>
           </div>
         </div>
       </section>
